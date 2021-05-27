@@ -5,7 +5,7 @@ let DND = {
         element._system.nonCopyStyle.remove();
         document.removeEventListener("contextmenu", menu);
         if (element.dataset.hasOwnProperty("dndCloneend") || !document.contains(element._system.clone)){
-            element.dispatchEvent(new CustomEvent(`clone`));
+            element.dispatchEvent(new CustomEvent(`clone`, {detail:{target: element}}));
         }
         element.onCanceling = false;
         setTimeout(()=>element.allMovePrevented = false, 50);
@@ -13,6 +13,10 @@ let DND = {
         element._info = undefined;
         element.hoverItem = undefined;
     },
+    clone:function (event) {
+        event.detail.target._system.clone.remove();
+        event.detail.target._system.clone = undefined;
+    }
 }
 {
     beginStyles.cache = new Map();
@@ -67,7 +71,7 @@ let DND = {
     }
     function atLeastOne(target, func, tracker, i){
         try{
-            for (let holder of (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e))) {
+            for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) {
                 if ((func(`#${holder?.id}`) !== target.hoverItem) && func(`#${holder?.id}`) !== null) {
                     target.hoverItem = holder;
                     return tracker[i](true);
@@ -108,19 +112,19 @@ let DND = {
         }
         let move = function (elem, event) {
             if (!event.isPrimary) return;
-            elem.style.left = event.pageX - xDifference + xPosOffset + `px`;
-            elem.style.top = event.pageY - yDifference + yPosOffset + `px`;
+            if (!target.dataset.dndPreventxdirection) elem.style.left = event.pageX - xDifference + xPosOffset + `px`;
+            if (!target.dataset.dndPreventydirection)elem.style.top = event.pageY - yDifference + yPosOffset + `px`;
             doBegin(target.dataset.dndOnmove, target, target.hoverItem, `dndOnmove`, target);
             try{
-                for (let holder of (target.dataset.dndHolder || target.parentElement.dataset.dndHolder).split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndOnmove, target, holder, `dndOnmove`, holder);
+                for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget).split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndOnmove, target, holder, `dndOnmove`, holder);
             }
             catch (e){}
         }.bind(null, target);
         let mouseCordsStart;
         beginStyles(target.dataset.dndStylebegin, target, `dndStylebegin`);
-        try{for (let holder of (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e))) beginStyles(holder.dataset.dndStylebegin, holder, `dndStylebegin`);}catch (e){}
+        try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) beginStyles(holder.dataset.dndStylebegin, holder, `dndStylebegin`);}catch (e){}
         doBegin(target.dataset.dndDobegin, target, (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e)), `dndDobegin`, target);
-        try{for (let holder of (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndDobegin, target, holder, `dndDobegin`, holder);}catch (e){}
+        try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndDobegin, target, holder, `dndDobegin`, holder);}catch (e){}
         let yDifference = event.pageY;
         let xDifference = event.pageX;
         let yPosOffset = target.getBoundingClientRect().y - target.offsetParent.getBoundingClientRect().y;
@@ -144,22 +148,20 @@ let DND = {
                 console.log("clone");
                 target._system.clone = target.cloneNode(true);
                 target._system.clone.style.visibility = `hidden`;
-                target._system.clone.style.zIndex = `-1`;
                 Object.defineProperty(target, `clone`, {writable: false});
                 target._system.clone.removeAttribute(`data-dnd`);
-                target.parentElement.append(target._system.clone);
+                target.before(target._system.clone);
                 beginStyles(target.dataset.dndClonebegin, target._system.clone, null);
-                target.addEventListener(`clone`, function () {
-                    target._system.clone.remove();
-                    target._system.clone = undefined;
-                }, {once: true});
+                target.addEventListener(`clone`, DND.clone, {once: true});
             }
             mouseCordsStart = [event.pageX, event.pageY];
+            target.stylebottom = "";
+            target.style.right = "";
             target.style.position = `absolute`;
             target.style.boxSizing = `border-box`;
             target.style.width = String(width) + `px`;
             target.style.height = String(height) + `px`;
-            doBegin(target.dataset.dndDosetabsolute, target, (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e)), `dndDosetabsolute`, target);
+            doBegin(target.dataset.dndDosetabsolute, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `dndDosetabsolute`, target);
             colorsHolder = {
                 get "1"() {
                     return "dndHoverinstyle";
@@ -202,7 +204,7 @@ let DND = {
         insideCheck(event);
         target.addEventListener(`pointermove`, move);
         function insideCheck(event) {
-            if (!event.isPrimary || !(target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e)).length) return;
+            if (!event.isPrimary || !(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)).length) return;
             let symbol = Symbol();
             try {
                 let cords = hoverBehavior[String(target.dataset.dndHoverbehavior)](event, target);
@@ -254,28 +256,28 @@ let DND = {
             target.onCanceling = true;
             target.removeEventListener(`pointermove`, move);
             target.removeEventListener(`pointermove`, insideCheck);
-            if (!target?.dataset?.Doanywaybefore && !target.hoverItem?.dataset?.Doanywaybefore && !target?.dataset?.dndDosuccess && !target.hoverItem?.dataset?.dndDosuccess && !target?.dataset?.dndDonotsuccess && !target.hoverItem?.dataset?.dndDonotsuccess && !target?.dataset?.dndDoanywayafter && !target.hoverItem?.dataset?.dndDoanywayafter) DND.end(target);
-            doBegin(target.dataset.Doanywaybefore, target, (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e)), `Doanywaybefore`, target);
-            try{for (let holder of (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywaybefore, target, holder, `Doanywaybefore`, holder);}catch (e){}
+            doBegin(target.dataset.Doanywaybefore, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `Doanywaybefore`, target);
+            try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywaybefore, target, holder, `Doanywaybefore`, holder);}catch (e){}
             let holder = target.hoverItem
             if (abilityToChange) {
-                let notSuccessList = new Set((target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e)));
+                let notSuccessList = new Set((target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)));
                 notSuccessList.delete(holder);
                 beginStyles(target.dataset.dndSuccessstyle, target, `dndSuccessstyle`);
                 beginStyles(holder.dataset.dndSuccessstyle, holder, `dndSuccessstyle`);
-                try{for (let holderi of notSuccessList) {console.log(holderi);beginStyles(holderi.dataset.dndNotsuccessstyle, holderi, `dndNotsuccessstyle`);}}catch (e){console.log(e)}
+                try{for (let holderi of notSuccessList) {beginStyles(holderi.dataset.dndNotsuccessstyle, holderi, `dndNotsuccessstyle`);}}catch (e){}
                 doBegin(target.dataset.dndDosuccess, target, holder, `dndDosuccess`, target);
                 doBegin(holder.dataset.dndDosuccess, target, holder, `dndDosuccess`, holder);
                 try{for (let holderi of notSuccessList) doBegin(holderi.dataset.dndDonotsuccess, target, holderi, `dndDonotsuccess`, holderi);}catch (e){}
             }
             else {
                 beginStyles(target.dataset.dndNotsuccessstyle, target, `dndNotsuccessstyle`);
-                try{for (let holder of (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>{return document.getElementById(e);})) beginStyles(holder.dataset.dndNotsuccessstyle, holder, `dndNotsuccessstyle`);}catch (e){}
+                try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>{return document.getElementById(e);})) beginStyles(holder.dataset.dndNotsuccessstyle, holder, `dndNotsuccessstyle`);}catch (e){}
                 doBegin(target.dataset.dndDonotsuccess, target, (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>{return document.getElementById(e);}), `dndDonotsuccess`, target);
-                try{for (let holder of (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>{return document.getElementById(e);})) doBegin(holder.dataset.dndDonotsuccess, target, holder, `dndDonotsuccess`, holder);}catch (e){}
+                try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>{return document.getElementById(e);})) doBegin(holder.dataset.dndDonotsuccess, target, holder, `dndDonotsuccess`, holder);}catch (e){}
             }
-            doBegin(target.dataset.dndDoanywayafter, target, (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywayafter`, target);
-            try{for (let holder of (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywayafter, target, holder, `Doanywayafter`, holder);}catch (e){}
+            doBegin(target.dataset.dndDoanywayafter, target, (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywayafter`, target);
+            try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywayafter, target, holder, `Doanywayafter`, holder);}catch (e){}
+            if (!target.dataset.dndendprevention) DND.end(target);
         }, {once: true});
     }, true);
 }
