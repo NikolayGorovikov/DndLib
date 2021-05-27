@@ -48,9 +48,9 @@ let DND = {
         __proto__: null
     }
     DND.addHoverBehaviour = function(func, name){
-    if (hoverBehavior[name]) throw new Error("Name you have chosen ("+name+") is already taken. Remember that names 'center', 'mouse' and 'undefined' are reserved. The list of names you cant use: "+Object.getOwnPropertyNames(hoverBehavior).toString());
-    hoverBehavior[name]=(event, elem)=>[func(event, elem)];
-}
+        if (hoverBehavior[name]) throw new Error("Name you have chosen ("+name+") is already taken. Remember that names 'center', 'mouse' and 'undefined' are reserved. The list of names you cant use: "+Object.getOwnPropertyNames(hoverBehavior).toString());
+        hoverBehavior[name]=(event, elem)=>[func(event, elem)];
+    }
     doBegin.cache = new Map();
     function doBegin(text, target, holder, type, owner) {
         if (text === undefined && type !== null) {
