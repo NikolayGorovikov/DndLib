@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Code changing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../returnStyles.css" rel="stylesheet">
+    <script src="../dndLib.js" defer></script>
+    <script src="code-changing.js" defer></script>
+    <style>
+        @font-face {
+            font-family: geometria;
+            src: url("../Geometria.woff") format("woff");
+        }
+        .exampleNumber{
+            width: 90vmin;
+            height: 7vmin;
+            font-family: geometria;
+            font-size: 7vmin;
+            text-align: center;
+            margin: 4vmin auto;
+        }
+        .description{
+            width: 80vw;
+            margin: 0 auto;
+            font-size: 3vmin;
+            font-family: geometria;
+            text-indent: 4vmin;
+        }
+        #wholeSection{
+            width: 90vmin;
+            border: black solid 0.5vmin;
+            box-sizing: border-box;
+            margin: 4vmin auto;
+            border-radius: 3vmin;
+            overflow: hidden;
+            transition-property: box-shadow;
+            transition-duration: 0.5s;
+        }
+        #code{
+            padding: 3vmin;
+            font-family: monospace;
+            font-size: 3vmin;
+            box-sizing: border-box;
+            background-color: gray;
+            transition-property: color;
+            transition-duration: 0.5s;
+        }
+        #screen{
+            background-color: white;
+            width: 89vmin;
+            height: 40vmin;
+            font-size: 1.5em;
+        }
+        #blocks{
+            width: 90vw;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 4vmin auto;
+        }
+        .block{
+            height: 14vmin;
+            box-sizing: border-box;
+            border: 1vmin gray solid;
+            text-align: center;
+            font-size: 3vmin;
+            font-family: geometria;
+            border-radius: 3vmin;
+            flex-basis: 22%;
+            max-width: 22%;
+            flex-grow: 0;
+            display: flex;
+            cursor: grab;
+            transition-property: transform;
+            transition-duration: 0.5s;
+            background-color: white;
+            z-index: 3;
+        }
+        .block > p{
+            margin: auto;
+            width: 95%;
+            transition-property: color;
+            transition-duration: 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="exampleNumber">Example 1</h1>
+    <p class="description">
+        We can use this library for some learning programs, to get the idea easily, lets imagine we are doing a program that
+        learn a user some language, let it be CSS (dont argue with me, it is a language), actually you cam see a bigger exaple of it
+        in one of my repositories, called learnProgect, but pay attention that i use there an older version of the lebrary, so you
+        can only see what does it possible to do.
+    </p>
+    <div id="wholeSection" data-dnd-hoverinstyle="box-shadow: 0 0 1vmin black;" data-dnd-hoveroutstyle="box-shadow: none;">
+        <div id="code">Some code here</div>
+        <div id="screen"></div>
+    </div>
+    <div id="blocks" data-dnd-dosetabsolute="makeCorrectSize(dragElem);" data-dnd-stylebegin="transform: scale(0.8);" data-dnd-clonebegin="background: linear-gradient(45deg, rgba(0, 0, 0, 0) 49.9%, gray 49.9%, gray 60%, rgba(0, 0, 0, 0) 60% ), linear-gradient(45deg, red 10%, rgba(0, 0, 0, 0) 10% );
+    background-size: 0.5em 0.5em; visibility: visible;" data-dnd-Doanywaybefore="doAnywayBefore(dragElem);" data-dnd-dosuccess="doSuccess(dragElem, target)" data-dnd-doanywayafter="doAnywayAfter(dragElem)">
+        <div class="block" data-dnd-cloneend data-dnd-endprevention data-dnd-target="wholeSection" data-dnd data-dnd-clone><p>background-color: red;</p></div>
+        <div class="block" data-dnd-cloneend data-dnd-endprevention  data-dnd-target="wholeSection" data-dnd data-dnd-clone><p>color: pink;</p></div>
+        <div class="block" data-dnd-cloneend data-dnd-endprevention  data-dnd-target="wholeSection"  data-dnd data-dnd-clone><p>font-size: 2em;</p></div>
+        <div class="block" data-dnd-cloneend data-dnd-endprevention  data-dnd-target="wholeSection" data-dnd data-dnd-clone><p>border-radius: 50%;</p></div>
+    </div>
+    <p class="description" style="margin-bottom: 4vmin;">
+        As you can see everything works perfect, i hope it does, and here we used only 40 JS lines, and some styles, actually i hate making a design so i am sorry for
+        this shit, but the main is that such not easy as you can firstly think task has been made in easy way, hope you like it. If you want to see a next example go <a href="#">here!</a>
+    </p>
+</body>
+</html>

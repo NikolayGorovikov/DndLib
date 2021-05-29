@@ -11,6 +11,7 @@ let DND = {
         element.allMovePrevented = false;
         element._info = undefined;
         element.hoverItem = undefined;
+        element.style.cursor = "";
     },
     clone:function (event) {
         event.detail.target._system.clone.remove();
@@ -112,7 +113,8 @@ let DND = {
         let move = function (elem, event) {
             if (!event.isPrimary) return;
             if (!target.dataset.dndPreventxdirection) elem.style.left = event.pageX - xDifference + xPosOffset + `px`;
-            if (!target.dataset.dndPreventydirection)elem.style.top = event.pageY - yDifference + yPosOffset + `px`;
+            if (!target.dataset.dndPreventydirection) elem.style.top = event.pageY - yDifference + yPosOffset + `px`;
+            console.log(elem.style.left, elem.style.top);
             doBegin(target.dataset.dndOnmove, target, target.hoverItem, `dndOnmove`, target);
             try{
                 for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget).split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndOnmove, target, holder, `dndOnmove`, holder);
@@ -120,14 +122,15 @@ let DND = {
             catch (e){}
         }.bind(null, target);
         let mouseCordsStart;
-        beginStyles(target.dataset.dndStylebegin, target, `dndStylebegin`);
-        try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) beginStyles(holder.dataset.dndStylebegin, holder, `dndStylebegin`);}catch (e){}
-        doBegin(target.dataset.dndDobegin, target, (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e)), `dndDobegin`, target);
-        try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndDobegin, target, holder, `dndDobegin`, holder);}catch (e){}
-        let yDifference = event.pageY;
-        let xDifference = event.pageX;
-        let yPosOffset = target.getBoundingClientRect().y - target.offsetParent.getBoundingClientRect().y;
-        let xPosOffset = target.getBoundingClientRect().x - target.offsetParent.getBoundingClientRect().x;
+        let yDifference, xDifference, yPosOffset, xPosOffset;
+        target._info.cordsStart = [target.offsetLeft, target.offsetTop];
+        let width = target.getBoundingClientRect().width;
+        let height = target.getBoundingClientRect().height;
+        let tracker, colorsHolder, colorsTarget, hoverFuncTarget, hoverFuncHolder;
+        yDifference = event.pageY;
+        xDifference = event.pageX;
+        yPosOffset = target.getBoundingClientRect().y - target.offsetParent.getBoundingClientRect().y;
+        xPosOffset = target.getBoundingClientRect().x - target.offsetParent.getBoundingClientRect().x;
         if (getComputedStyle(target.offsetParent).position === `static`) {
             yPosOffset = target.getBoundingClientRect().y - document.documentElement.getBoundingClientRect().y - (parseFloat(getComputedStyle(document.documentElement).borderTopWidth) + parseFloat(getComputedStyle(document.documentElement).paddingTop));
             xPosOffset = target.getBoundingClientRect().x - document.documentElement.getBoundingClientRect().x - (parseFloat(getComputedStyle(document.documentElement).borderLeftWidth) + parseFloat(getComputedStyle(document.documentElement).paddingLeft));
@@ -136,10 +139,6 @@ let DND = {
             yPosOffset -= (parseFloat(getComputedStyle(target.offsetParent).borderTopWidth) + parseFloat(getComputedStyle(target.offsetParent).paddingTop));
             xPosOffset -= (parseFloat(getComputedStyle(target.offsetParent).borderLeftWidth) + parseFloat(getComputedStyle(target.offsetParent).paddingLeft));
         }
-        target._info.cordsStart = [target.offsetLeft, target.offsetTop];
-        let width = target.getBoundingClientRect().width;
-        let height = target.getBoundingClientRect().height;
-        let tracker, colorsHolder, colorsTarget, hoverFuncTarget, hoverFuncHolder;
         (function setPosition() {
             if (target.allMovePrevented || !event.isPrimary) return;
             isEverMoved = true;
@@ -150,17 +149,36 @@ let DND = {
                 Object.defineProperty(target, `clone`, {writable: false});
                 target._system.clone.removeAttribute(`data-dnd`);
                 target.before(target._system.clone);
-                beginStyles(target.dataset.dndClonebegin, target._system.clone, null);
+                beginStyles(target.dataset.dndClonebegin, target._system.clone, 'dndClonebegin');
                 target.addEventListener(`clone`, DND.clone, {once: true});
             }
             mouseCordsStart = [event.pageX, event.pageY];
-            target.stylebottom = "";
+            beginStyles(target.dataset.dndStylebegin, target, `dndStylebegin`);
+            try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) beginStyles(holder.dataset.dndStylebegin, holder, `dndStylebegin`);}catch (e){}
+            doBegin(target.dataset.dndDobegin, target, (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e)), `dndDobegin`, target);
+            try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndDobegin, target, holder, `dndDobegin`, holder);}catch (e){}
+            target.style.bottom = "";
             target.style.right = "";
             target.style.position = `absolute`;
             target.style.boxSizing = `border-box`;
             target.style.width = String(width) + `px`;
             target.style.height = String(height) + `px`;
+            target.style.left = event.pageX - xDifference + xPosOffset + `px`;
+            target.style.top = event.pageY - yDifference + yPosOffset + `px`;
+            target.style.cursor = "grabbing";
             doBegin(target.dataset.dndDosetabsolute, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `dndDosetabsolute`, target);
+            yDifference = event.pageY;
+            xDifference = event.pageX;
+            yPosOffset = target.getBoundingClientRect().y - target.offsetParent.getBoundingClientRect().y;
+            xPosOffset = target.getBoundingClientRect().x - target.offsetParent.getBoundingClientRect().x;
+            if (getComputedStyle(target.offsetParent).position === `static`) {
+                yPosOffset = target.getBoundingClientRect().y - document.documentElement.getBoundingClientRect().y - (parseFloat(getComputedStyle(document.documentElement).borderTopWidth) + parseFloat(getComputedStyle(document.documentElement).paddingTop));
+                xPosOffset = target.getBoundingClientRect().x - document.documentElement.getBoundingClientRect().x - (parseFloat(getComputedStyle(document.documentElement).borderLeftWidth) + parseFloat(getComputedStyle(document.documentElement).paddingLeft));
+            }
+            else {
+                yPosOffset -= (parseFloat(getComputedStyle(target.offsetParent).borderTopWidth) + parseFloat(getComputedStyle(target.offsetParent).paddingTop));
+                xPosOffset -= (parseFloat(getComputedStyle(target.offsetParent).borderLeftWidth) + parseFloat(getComputedStyle(target.offsetParent).paddingLeft));
+            }
             colorsHolder = {
                 get "1"() {
                     return "dndHoverinstyle";
@@ -200,19 +218,23 @@ let DND = {
             "1": (a) => a
         }
         let abilityToChange = false;
-        insideCheck(event);
-        target.addEventListener(`pointermove`, move);
+        function all(event){
+            move(event);
+            insideCheck(event);
+        }
+        target.addEventListener(`pointermove`, all);
         function insideCheck(event) {
             if (!event.isPrimary || !(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)).length) return;
             let symbol = Symbol();
             try {
                 let cords = hoverBehavior[String(target.dataset.dndHoverbehavior)](event, target);
-                target[symbol] = target.style.display;
-                target.style.display = `none`;
+                target[symbol] = target.style.zIndex;
+                target.style.zIndex = `-10000`;
                 let hover= target.hoverItem;
                 for (let n of cords) {
                     let elem = document.elementFromPoint(...n);
                     if (!elem) {
+                        target.style.zIndex = target[symbol];
                         if (target.dataset.dndOutthewindow) doBegin(target.dataset.dndOutthewindow, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), "dndOutthewindow", target);
                         else target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
                         break;
@@ -237,7 +259,7 @@ let DND = {
                             doBegin(target.dataset?.dndDohoverout, target, hover, 'dndDohoverout', target);
                             doBegin(hover?.dataset?.dndDohoverout, target, hover, 'dndDohoverout', hover);
                         }
-                        target.style.display = target[symbol];
+                        target.style.zIndex = target[symbol];
                         if (target.hoverItem === hover && i == -1 || i == 1){
                             if (i == -1) target.hoverItem = undefined;
                             i = -i;
@@ -246,21 +268,19 @@ let DND = {
                         break;
                     }
                 }
-                target.style.display = target[symbol];
+                target.style.zIndex = target[symbol];
             }
             catch (e) {
-                target.style.display = target[symbol];
+                target.style.zIndex = target[symbol];
                 target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
             }
         }
-        target.addEventListener(`pointermove`, insideCheck);
         target.addEventListener(`pointerup`, function (event) {
             if (!event.isPrimary) return;
             target.allMovePrevented = true;
             target.onCanceling = true;
-            target.removeEventListener(`pointermove`, move);
-            target.removeEventListener(`pointermove`, insideCheck);
-            doBegin(target.dataset.Doanywaybefore, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `Doanywaybefore`, target);
+            target.removeEventListener(`pointermove`, all);
+            doBegin(target.dataset.dndDoanywaybefore, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywaybefore`, target);
             try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywaybefore, target, holder, `Doanywaybefore`, holder);}catch (e){}
             let holder = target.hoverItem
             if (abilityToChange) {
