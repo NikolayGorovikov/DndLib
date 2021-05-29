@@ -8,8 +8,7 @@ let DND = {
             element.dispatchEvent(new CustomEvent(`clone`, {detail:{target: element}}));
         }
         element.onCanceling = false;
-        setTimeout(()=>element.allMovePrevented = false, 50);
-        element.info = undefined;
+        element.allMovePrevented = false;
         element._info = undefined;
         element.hoverItem = undefined;
     },
@@ -212,25 +211,31 @@ let DND = {
                 target.style.display = `none`;
                 let hover= target.hoverItem;
                 for (let n of cords) {
-                    if (tracker[i](atLeastOne(target, document.elementFromPoint(...n).closest.bind(document.elementFromPoint(...n)), tracker, i))) {
-                        if (i==1 || (target.hoverItem === hover)) beginStyles(colorsTarget[i], target, null);
+                    let elem = document.elementFromPoint(...n);
+                    if (!elem) {
+                        if (target.dataset.dndOutTheWindow) doBegin(target.dataset.dndOutTheWindow, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), "dndOutTheWindow", target);
+                        else target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
+                        break;
+                    }
+                    else if (tracker[i](atLeastOne(target, elem.closest.bind(elem), tracker, i))) {
+                        if (i==1 || (target.hoverItem === hover)) beginStyles(colorsTarget[i], target, i == 1? "dndHoverinstyle":"dndHoveroutstyle");
                         if (i === 1) {
-                            beginStyles(target.hoverItem.dataset.dndHoverinstyle, target.hoverItem, null);
-                            doBegin(target.dataset.dndDohoverin, target, target.hoverItem, null, null);
-                            doBegin(target.hoverItem.dataset.dndDohoverin, target, target.hoverItem, null, null);
+                            beginStyles(target.hoverItem.dataset.dndHoverinstyle, target.hoverItem, 'dndHoverinstyle');
+                            doBegin(target.dataset.dndDohoverin, target, target.hoverItem, 'dndDohoverin', target);
+                            doBegin(target.hoverItem.dataset.dndDohoverin, target, target.hoverItem, 'dndDohoverin', target.hoverItem);
                         }
                         else if (target.hoverItem !== hover && i == -1){
-                            beginStyles(hover?.dataset?.dndHoveroutstyle, hover, null);
-                            doBegin(target.dataset.dndDohoverout, target, hover, null, null);
-                            doBegin(hover?.dataset?.dndDohoverout, target, hover, null, null);
-                            beginStyles(target.hoverItem.dataset.dndHoverinstyle, target.hoverItem, null);
-                            doBegin(target.dataset.dndDohoverin, target, target.hoverItem, null, null);
-                            doBegin(target.hoverItem.dataset.dndDohoverin, target, target.hoverItem, null, null);
+                            beginStyles(hover?.dataset?.dndHoveroutstyle, hover, 'dndHoveroutstyle');
+                            doBegin(target.dataset.dndDohoverout, target, hover, 'dndDohoverout', target);
+                            doBegin(hover?.dataset?.dndDohoverout, target, hover, 'dndDohoverout', hover);
+                            beginStyles(target.hoverItem.dataset.dndHoverinstyle, target.hoverItem, 'dndHoverinstyle');
+                            doBegin(target.dataset.dndDohoverin, target, target.hoverItem, 'dndDohoverin', target);
+                            doBegin(target.hoverItem.dataset.dndDohoverin, target, target.hoverItem, 'dndDohoverin', target.hoverItem);
                         }
                         else {
-                            beginStyles(hover?.dataset?.dndHoveroutstyle, hover, null);
-                            doBegin(target.dataset?.dndDohoverout, target, hover, null, null);
-                            doBegin(hover?.dataset?.dndDohoverout, target, hover, null, null);
+                            beginStyles(hover?.dataset?.dndHoveroutstyle, hover, 'dndHoveroutstyle');
+                            doBegin(target.dataset?.dndDohoverout, target, hover, 'dndDohoverout', target);
+                            doBegin(hover?.dataset?.dndDohoverout, target, hover, 'dndDohoverout', hover);
                         }
                         target.style.display = target[symbol];
                         if (target.hoverItem === hover && i == -1 || i == 1){
@@ -246,7 +251,6 @@ let DND = {
             catch (e) {
                 target.style.display = target[symbol];
                 target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
-                console.log(e);
             }
         }
         target.addEventListener(`pointermove`, insideCheck);
@@ -277,7 +281,7 @@ let DND = {
             }
             doBegin(target.dataset.dndDoanywayafter, target, (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywayafter`, target);
             try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywayafter, target, holder, `Doanywayafter`, holder);}catch (e){}
-            if (!target.dataset.dndendprevention) DND.end(target);
+            if (!target.dataset.dndEndprevention) DND.end(target);
         }, {once: true});
     }, true);
 }
