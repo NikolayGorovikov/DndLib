@@ -213,7 +213,7 @@ let DND = {
                 for (let n of cords) {
                     let elem = document.elementFromPoint(...n);
                     if (!elem) {
-                        if (target.dataset.dndOutTheWindow) doBegin(target.dataset.dndOutTheWindow, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), "dndOutTheWindow", target);
+                        if (target.dataset.dndOutthewindow) doBegin(target.dataset.dndOutthewindow, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), "dndOutthewindow", target);
                         else target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
                         break;
                     }
@@ -281,7 +281,7 @@ let DND = {
             }
             doBegin(target.dataset.dndDoanywayafter, target, (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywayafter`, target);
             try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywayafter, target, holder, `Doanywayafter`, holder);}catch (e){}
-            if (!target.dataset.dndEndprevention) DND.end(target);
+            if (!target.dataset.hasOwnProperty("dndEndprevention")) DND.end(target);
         }, {once: true});
     }, true);
 }
