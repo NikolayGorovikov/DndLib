@@ -5,28 +5,10 @@
     <title>Code changing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../returnStyles.css" rel="stylesheet">
+    <link href="../descriptionStyles.css" rel="stylesheet">
     <script src="../dndLib.js" defer></script>
     <script src="code-changing.js" defer></script>
     <style>
-        @font-face {
-            font-family: geometria;
-            src: url("../Geometria.woff") format("woff");
-        }
-        .exampleNumber{
-            width: 90vmin;
-            height: 7vmin;
-            font-family: geometria;
-            font-size: 7vmin;
-            text-align: center;
-            margin: 4vmin auto;
-        }
-        .description{
-            width: 80vw;
-            margin: 0 auto;
-            font-size: 3vmin;
-            font-family: geometria;
-            text-indent: 4vmin;
-        }
         #wholeSection{
             width: 90vmin;
             border: black solid 0.5vmin;
@@ -102,7 +84,7 @@
         <div class="block" data-dnd-cloneend data-dnd-endprevention data-dnd-target="wholeSection" data-dnd data-dnd-clone><p>background-color: red;</p></div>
         <div class="block" data-dnd-cloneend data-dnd-endprevention  data-dnd-target="wholeSection" data-dnd data-dnd-clone><p>color: pink;</p></div>
         <div class="block" data-dnd-cloneend data-dnd-endprevention  data-dnd-target="wholeSection"  data-dnd data-dnd-clone><p>font-size: 2em;</p></div>
-        <div class="block" data-dnd-cloneend data-dnd-endprevention  data-dnd-target="wholeSection" data-dnd data-dnd-clone><p>border-radius: 50%;</p></div>
+        <div class="block" data-dnd-cloneend data-dnd-endprevention  data-dnd-target="wholeSection" data-dnd data-dnd-clone><p>opacity: 0.5;</p></div>
     </div>
     <p class="description" style="margin-bottom: 4vmin;">
         As you can see everything works perfect, i hope it does, and here we used only 40 JS lines, and some styles, actually i hate making a design so i am sorry for

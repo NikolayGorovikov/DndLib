@@ -114,7 +114,6 @@ let DND = {
             if (!event.isPrimary) return;
             if (!target.dataset.dndPreventxdirection) elem.style.left = event.pageX - xDifference + xPosOffset + `px`;
             if (!target.dataset.dndPreventydirection) elem.style.top = event.pageY - yDifference + yPosOffset + `px`;
-            console.log(elem.style.left, elem.style.top);
             doBegin(target.dataset.dndOnmove, target, target.hoverItem, `dndOnmove`, target);
             try{
                 for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget).split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndOnmove, target, holder, `dndOnmove`, holder);

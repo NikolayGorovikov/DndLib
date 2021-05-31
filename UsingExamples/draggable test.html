@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Draggable test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../returnStyles.css" rel="stylesheet">
+    <link href="../descriptionStyles.css" rel="stylesheet">
+    <script src="../dndLib.js" defer></script>
+    <script src="draggable%20test.js" defer></script>
+    <style>
+        .test{
+            width: 80vw;
+            display: flex;
+            justify-content: space-around;
+            margin: 4vmin auto;
+        }
+        .tasks, .answers{
+            flex-basis: 40%;
+            flex-grow: 0;
+            height: 72vmin;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+        .task, .answer{
+            width:90%;
+            flex-basis: calc(72vmin * 21 / 100);
+            flex-grow: 0;
+            margin: 0 auto;
+            box-sizing: border-box;
+            border: 1vmin black solid;
+            border-radius: 3vmin;
+            font-size: 10vmin;
+            line-height: calc(72vmin * 21 / 100 - 2vmin);
+            text-align: center;
+            position: relative;
+        }
+        .answer:before{
+            content: "";
+            width: 5vmin;
+            height: 8vmin;
+            background-color: white;
+            z-index: 2;
+            left: -6vmin;
+            top: calc(72vmin * 21 / 200 - 1vmin - 4vmin);
+            position: absolute;
+        }
+        .circle{
+            position: absolute;
+            width: 8vmin;
+            height: 8vmin;
+            top: calc(72vmin * 21 / 200 - 1vmin - 4vmin);
+            box-sizing: border-box;
+            border: 1vmin black solid;
+            border-radius: 4vmin;
+            background-color: white;
+            z-index: 100;
+            transition-duration: 0.5s;
+            transition-property: none;
+        }
+        .circle:not(.whiteCircle){
+            right: -4.5vmin;
+        }
+        .whiteCircle{
+            left: -5.5vmin;
+            z-index: 1;
+            width: 9vmin;
+        }
+        .line{
+            height: 3vmin;
+            background-color: black;
+            position: absolute;
+            top: calc(72vmin * 21 / 200 - 1vmin - 1.5vmin);
+            left: calc(100% + 0.5vmin);
+            z-index: 4;
+            transform-origin: 0 50%;
+            transition-duration: 0.5s;
+            transition-property: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="exampleNumber">Example 2</h1>
+    <p class="description">
+        The dndLib would be good foe doing some tests where you have to move something somewhere, and here i tried to fund the most
+        difficult variant of test, so it supposed to be difficult of doing it, but i am sure that dndLib will make this task much easier,
+        so lets see what have i decided to do.
+    </p>
+    <h2 class="exampleNumber" style="font-size: 5vmin;">Connect with the correct answer</h2>
+    <div class="test">
+        <div class="tasks">
+            <div class="task task1">2+2<div class="line"></div><div class="circle" data-dnd></div></div>
+            <div class="task task2">3*4<div class="line"></div><div class="circle" data-dnd></div></div>
+            <div class="task task3">6/2<div class="line"></div><div class="circle" data-dnd></div></div>
+            <div class="task task4">5-2<div class="line"></div><div class="circle" data-dnd></div></div>
+        </div>
+        <div class="answers">
+            <div class="answer answer1" id="ans1">3<div class="whiteCircle circle"></div></div>
+            <div class="answer answer2" id="ans2">12<div class="whiteCircle circle"></div></div>
+            <div class="answer answer3" id="ans3">3<div class="whiteCircle circle"></div></div>
+            <div class="answer answer4" id="ans4">4<div class="whiteCircle circle"></div></div>
+        </div>
+    </div>
+</body>
+</html>

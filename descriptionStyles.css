@@ -1,0 +1,19 @@
+@font-face {
+    font-family: geometria;
+    src: url("Geometria.woff") format("woff");
+}
+.exampleNumber{
+    width: 90vmin;
+    height: 7vmin;
+    font-family: geometria;
+    font-size: 7vmin;
+    text-align: center;
+    margin: 4vmin auto;
+}
+.description{
+    width: 80vw;
+    margin: 4vmin auto;
+    font-size: 3vmin;
+    font-family: geometria;
+    text-indent: 4vmin;
+}
