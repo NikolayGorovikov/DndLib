@@ -1,15 +1,9 @@
 function toDegrees(angle){
     return angle * (180 / Math.PI);
 }
-DND.addHoverBehaviour(function (event, elem){
-    return [elem.getBoundingClientRect().x+elem.getBoundingClientRect().width/2+1, elem.getBoundingClientRect().y+elem.getBoundingClientRect().height/2];
-}, "center1");
 function stickPosition(ball){
     ball.stick.style.width = Math.sqrt(Math.pow(ball.getBoundingClientRect().x+ball.getBoundingClientRect().width/2-ball.parent.getBoundingClientRect().right+Math.min(innerHeight, innerWidth)/200, 2)+Math.pow(ball.getBoundingClientRect().y+ball.getBoundingClientRect().height/2-ball.parent.getBoundingClientRect().y-ball.parent.getBoundingClientRect().height/2, 2))+`px`;
     let degrees = toDegrees(Math.acos(Math.abs((ball.getBoundingClientRect().x+ball.getBoundingClientRect().width/2 -ball.parent.getBoundingClientRect().right+Math.min(innerHeight, innerWidth)/200))/parseFloat(ball.stick.style.width)));
-    console.log(((ball.getBoundingClientRect().x+ball.getBoundingClientRect().width/2 -ball.parent.getBoundingClientRect().right+Math.min(innerHeight, innerWidth)/200)));
-    console.log(Math.acos(Math.abs((ball.getBoundingClientRect().x+ball.getBoundingClientRect().width/2 -ball.parent.getBoundingClientRect().right+Math.min(innerHeight, innerWidth)/200))/parseFloat(ball.stick.style.width)));
-    console.log();
     if (ball.getBoundingClientRect().x+ball.getBoundingClientRect().width/2 - ball.parent.getBoundingClientRect().right+Math.min(innerHeight, innerWidth)/200 <= 0) {
         degrees = 180-degrees;
     }
@@ -26,7 +20,7 @@ function notSuccess(elem){
 }
 function before(elem){
     elem.style.transitionProperty = "left, top";
-    elem.stick.style.transitionProperty = "width, transform";
+    elem.stick.style.transitionProperty = "width";
 }
 function after(elem){
     setTimeout(()=>{
@@ -36,30 +30,31 @@ function after(elem){
     }, 500);
 }
 function doSuccess(elem, target){
-    elem.style.transitionProperty = "";
-    elem.left = elem.style.left;
-    elem.top = elem.style.top;
+    elem.stick.style.transitionProperty = "";
     elem.style.left = "calc(100% - 3.5vmin + 8vw + 32vw * 0.1 + 1vmin)";
-    elem.style.top = "calc(72vmin * 21 / 200 - 1vmin - 4vmin)";
-    stickPosition(elem);
-    elem.style.left = elem.left;
-    elem.style.top = elem.top;
+    elem.style.top = "calc(72vmin * 21 / 200 - 1vmin - 4vmin + ("+target.id[3]+" - "+elem.parentElement.dataset.num+") * (0.25 * 72vmin))";
+    let a = setInterval(()=>stickPosition(elem), 10);
     setTimeout(()=>{
-        elem.style.transitionProperty = "left, top";
-        elem.style.left = "calc(100% - 3.5vmin + 8vw + 32vw * 0.1 + 1vmin)";
-        elem.style.top = "calc(72vmin * 21 / 200 - 1vmin - 4vmin)";
-    }, 0);
+        clearInterval(a);
+        console.log(target.innerText);
+        if (eval(elem.innerText) == target.innerText) {
+            target.style.boxShadow = "0 0 2vmin green";
+        }
+        else{
+            target.style.boxShadow = "0 0 2vmin red";
+        }
+    }, 510);
 }
 for (let i of document.querySelectorAll(".task > .circle")){
     i.setAttribute("data-dnd-clone", "");
     i.setAttribute("data-dnd-cloneBegin", "visibility: visible");
-    i.setAttribute("data-dnd-target", "ans1");
+    i.setAttribute("data-dnd-target", "ans1 ans2 ans3 ans4");
     i.stick = i.parentElement.querySelector(".line");
     i.parent = i.parentElement;
     i.setAttribute("data-dnd-doanywaybefore", "before(dragElem)");
     i.setAttribute("data-dnd-onMove", "stickPosition(dragElem)");
     i.setAttribute("data-dnd-donotsuccess", "notSuccess(dragElem);");
-    i.setAttribute("data-dnd-hoverBehavior", "center1");
     i.setAttribute("data-dnd-dosuccess", "doSuccess(dragElem, target)");
     i.setAttribute("data-dnd-doanywayafter", "after(dragElem);");
+    i.setAttribute("data-dnd-ignore", ".line");
 }

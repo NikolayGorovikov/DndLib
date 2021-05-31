@@ -225,6 +225,7 @@ let DND = {
         function insideCheck(event) {
             if (!event.isPrimary || !(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)).length) return;
             let symbol = Symbol();
+            let list = [];
             try {
                 let cords = hoverBehavior[String(target.dataset.dndHoverbehavior)](event, target);
                 target[symbol] = target.style.zIndex;
@@ -232,8 +233,14 @@ let DND = {
                 let hover= target.hoverItem;
                 for (let n of cords) {
                     let elem = document.elementFromPoint(...n);
+                    while (elem.matches(target.dataset.dndIgnore)){
+                        list.push(elem);
+                        elem.style.visibility = "hidden";
+                        elem = document.elementFromPoint(...n);
+                    }
                     if (!elem) {
                         target.style.zIndex = target[symbol];
+                        list.forEach((e)=>e.style.visibility = "");
                         if (target.dataset.dndOutthewindow) doBegin(target.dataset.dndOutthewindow, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), "dndOutthewindow", target);
                         else target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
                         break;
@@ -259,6 +266,7 @@ let DND = {
                             doBegin(hover?.dataset?.dndDohoverout, target, hover, 'dndDohoverout', hover);
                         }
                         target.style.zIndex = target[symbol];
+                        list.forEach((e)=>e.style.visibility = "");
                         if (target.hoverItem === hover && i == -1 || i == 1){
                             if (i == -1) target.hoverItem = undefined;
                             i = -i;
@@ -268,9 +276,11 @@ let DND = {
                     }
                 }
                 target.style.zIndex = target[symbol];
+                list.forEach((e)=>e.style.visibility = "");
             }
             catch (e) {
                 target.style.zIndex = target[symbol];
+                list.forEach((e)=>e.style.visibility = "");
                 target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
             }
         }
