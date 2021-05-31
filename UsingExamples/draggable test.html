@@ -35,6 +35,8 @@
             line-height: calc(72vmin * 21 / 100 - 2vmin);
             text-align: center;
             position: relative;
+            transition-property: box-shadow;
+            transition-duration: 0.5s;
         }
         .answer:before{
             content: "";
@@ -61,6 +63,7 @@
         }
         .circle:not(.whiteCircle){
             right: -4.5vmin;
+            cursor: grab;
         }
         .whiteCircle{
             left: -5.5vmin;
@@ -102,5 +105,9 @@
             <div class="answer answer4" id="ans4">4<div class="whiteCircle circle"></div></div>
         </div>
     </div>
+    <p class="description">
+        So you can see that this example is kind a difficult on ots making, bau using the dbdLib it takes just 70 lines
+        of code. Go <a href="#">here</a> to see a next example.
+    </p>
 </body>
 </html>

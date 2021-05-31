@@ -27,17 +27,31 @@ function after(elem){
         DND.end(elem);
         elem.style.transitionProperty = "";
         elem.stick.style.transitionProperty = "";
+        elem.style.zIndex = "100";
     }, 500);
 }
+function hoverin(target){
+    if (target.ans) return;
+    target.style.boxShadow = "none";
+}
+function begin(elem){
+    elem.style.zIndex = "101";
+    try{elem.ans.ans = undefined;}catch (e){}
+}
 function doSuccess(elem, target){
+    if (target.ans !== undefined) {
+        notSuccess(elem);
+        return;
+    }
     elem.stick.style.transitionProperty = "";
     elem.style.left = "calc(100% - 3.5vmin + 8vw + 32vw * 0.1 + 1vmin)";
     elem.style.top = "calc(72vmin * 21 / 200 - 1vmin - 4vmin + ("+target.id[3]+" - "+elem.parentElement.dataset.num+") * (0.25 * 72vmin))";
+    target.ans = elem;
+    elem.ans = target;
     let a = setInterval(()=>stickPosition(elem), 10);
     setTimeout(()=>{
         clearInterval(a);
-        console.log(target.innerText);
-        if (eval(elem.innerText) == target.innerText) {
+        if (eval(elem.parentElement.innerText) == target.innerText) {
             target.style.boxShadow = "0 0 2vmin green";
         }
         else{
@@ -57,4 +71,7 @@ for (let i of document.querySelectorAll(".task > .circle")){
     i.setAttribute("data-dnd-dosuccess", "doSuccess(dragElem, target)");
     i.setAttribute("data-dnd-doanywayafter", "after(dragElem);");
     i.setAttribute("data-dnd-ignore", ".line");
+    i.setAttribute("data-dnd-dohoverin", "hoverin(target)");
+    i.setAttribute("data-dnd-dohoverout", "hoverin(target)");
+    i.setAttribute("data-dnd-dobegin", "begin(dragElem)");
 }
