@@ -12,6 +12,7 @@ let DND = {
         element._info = undefined;
         element.hoverItem = undefined;
         element.style.cursor = "";
+        document.body.style.touchAction = '';
     },
     clone:function (event) {
         event.detail.target._system.clone.remove();
@@ -90,7 +91,7 @@ let DND = {
         if (!target || target.allMovePrevented || target.onCanceling) return;
         target.ondragstart = () => false;
         document.addEventListener("contextmenu", menu.bind(target), {once: true});
-        target.style.touchAction = `none`;
+        document.body.style.touchAction = `none`;
         target.setPointerCapture(event.pointerId);
         let isEverMoved = false;
         target._info ={
@@ -142,7 +143,6 @@ let DND = {
             if (target.allMovePrevented || !event.isPrimary) return;
             isEverMoved = true;
             if (target.dataset.hasOwnProperty(`dndClone`) && !target._system.clone) {
-                console.log("clone");
                 target._system.clone = target.cloneNode(true);
                 target._system.clone.style.visibility = `hidden`;
                 Object.defineProperty(target, `clone`, {writable: false});
