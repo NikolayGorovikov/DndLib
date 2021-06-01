@@ -22,6 +22,9 @@ function before(elem){
     elem.style.transitionProperty = "left, top";
     elem.stick.style.transitionProperty = "width";
 }
+function absolute(elem){
+    elem.style.width = elem.style.height = "8vmin";
+}
 function after(elem){
     setTimeout(()=>{
         DND.end(elem);
@@ -74,4 +77,8 @@ for (let i of document.querySelectorAll(".task > .circle")){
     i.setAttribute("data-dnd-dohoverin", "hoverin(target)");
     i.setAttribute("data-dnd-dohoverout", "hoverin(target)");
     i.setAttribute("data-dnd-dobegin", "begin(dragElem)");
+    i.setAttribute("data-dnd-dosetabsolute", "absolute(dragElem)");
 }
+window.addEventListener("resize", ()=>{
+    for (let i of document.querySelectorAll(".task > .circle[data-dnd]")) stickPosition(i);
+});
