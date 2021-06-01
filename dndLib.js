@@ -90,11 +90,11 @@ let DND = {
         let target = event.target.closest(`[data-dnd]`);
         if (!target || target.allMovePrevented || target.onCanceling) return;
         target.ondragstart = () => false;
+        console.log(target);
         document.addEventListener("contextmenu", menu.bind(target), {once: true});
         document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
         target.addEventListener("pointercancel", ()=>document.body.style.backgroundColor = "red");
         target.addEventListener("gotpointercapture", ()=>document.body.style.backgroundColor = "blue");
-        target.addEventListener("lostpointercapture", ()=>document.body.style.backgroundColor = "green");
         target.setPointerCapture(event.pointerId);
         let isEverMoved = false;
         target._info ={
@@ -293,6 +293,7 @@ let DND = {
             target.onCanceling = true;
             target.removeEventListener(`pointermove`, all);
             document.head.querySelector("[data-systemDnd]").remove();
+            document.body.style.backgroundColor = "yellow";
             doBegin(target.dataset.dndDoanywaybefore, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywaybefore`, target);
             try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywaybefore, target, holder, `Doanywaybefore`, holder);}catch (e){}
             let holder = target.hoverItem
