@@ -91,7 +91,7 @@ let DND = {
         if (!target || target.allMovePrevented || target.onCanceling) return;
         target.ondragstart = () => false;
         document.addEventListener("contextmenu", menu.bind(target), {once: true});
-        document.body.style.touchAction = `none`;
+        document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>')
         target.setPointerCapture(event.pointerId);
         let isEverMoved = false;
         target._info ={
@@ -289,6 +289,7 @@ let DND = {
             target.allMovePrevented = true;
             target.onCanceling = true;
             target.removeEventListener(`pointermove`, all);
+            document.head.querySelector("[data-systemDnd]").remove();
             doBegin(target.dataset.dndDoanywaybefore, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywaybefore`, target);
             try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywaybefore, target, holder, `Doanywaybefore`, holder);}catch (e){}
             let holder = target.hoverItem
