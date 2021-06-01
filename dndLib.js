@@ -91,7 +91,8 @@ let DND = {
         if (!target || target.allMovePrevented || target.onCanceling) return;
         target.ondragstart = () => false;
         document.addEventListener("contextmenu", menu.bind(target), {once: true});
-        document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>')
+        document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
+        target.addEventListener("pointercancel", ()=>document.body.style.backgroundColor = "red");
         target.setPointerCapture(event.pointerId);
         let isEverMoved = false;
         target._info ={
