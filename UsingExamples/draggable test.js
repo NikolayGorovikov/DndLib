@@ -78,6 +78,7 @@ for (let i of document.querySelectorAll(".task > .circle")){
     i.setAttribute("data-dnd-dohoverout", "hoverin(target)");
     i.setAttribute("data-dnd-dobegin", "begin(dragElem)");
     i.setAttribute("data-dnd-dosetabsolute", "absolute(dragElem)");
+    i.setAttribute("data-dnd-endprevention");
 }
 window.addEventListener("resize", ()=>{
     for (let i of document.querySelectorAll(".task > .circle[data-dnd]")) stickPosition(i);
