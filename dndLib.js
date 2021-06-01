@@ -93,6 +93,8 @@ let DND = {
         document.addEventListener("contextmenu", menu.bind(target), {once: true});
         document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
         target.addEventListener("pointercancel", ()=>document.body.style.backgroundColor = "red");
+        target.addEventListener("gotpointercapture", ()=>document.body.style.backgroundColor = "blue");
+        target.addEventListener("lostpointercapture", ()=>document.body.style.backgroundColor = "green");
         target.setPointerCapture(event.pointerId);
         let isEverMoved = false;
         target._info ={
