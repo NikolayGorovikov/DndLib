@@ -94,10 +94,6 @@ let DND = {
         if (!event.isPrimary) return;
         let target = event.target.closest(`[data-dnd]`);
         if (!target || target.allMovePrevented || target.onCanceling) return;
-        target.addEventListener("dragstart", (e)=>{
-            e.preventDefault();
-            e.target.style.backgroundColor = "red";
-        }, {once: true, capture:true});
         document.addEventListener("contextmenu", menu.bind(target, event.pointerId), {once: true});
         document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
         target.setPointerCapture(event.pointerId);
