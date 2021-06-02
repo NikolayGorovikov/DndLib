@@ -96,9 +96,17 @@ let DND = {
         catch (E){}
     }
     document.body.addEventListener(`pointerdown`, function (event) {
+        console.log(123, event);
         if (!event.isPrimary) return;
         let target = event.target.closest(`[data-dnd]`);
+        console.log(event.target);
         if (!target || target.allMovePrevented || target.onCanceling) return;
+        if (event.target !== target){
+            event.target = target;
+            target.dispatchEvent(new PointerEvent("pointerdown", event));
+            return;
+        }
+        console.log(123456);
         document.addEventListener("contextmenu", menu.bind(target, event.pointerId), {once: true});
         document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
         console.log(target);
@@ -323,5 +331,5 @@ let DND = {
             try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywayafter, target, holder, `Doanywayafter`, holder);}catch (e){}
             if (!target.dataset.hasOwnProperty("dndEndprevention")) DND.end(target);
         }, {once: true});
-    }, true);
+    });
 }
