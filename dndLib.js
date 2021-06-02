@@ -96,20 +96,11 @@ let DND = {
         catch (E){}
     }
     document.body.addEventListener(`pointerdown`, function (event) {
-        console.log(123, event);
         if (!event.isPrimary) return;
         let target = event.target.closest(`[data-dnd]`);
-        console.log(event.target);
         if (!target || target.allMovePrevented || target.onCanceling) return;
-        // if (event.target !== target){
-        //     event.target = target;
-        //     target.dispatchEvent(new PointerEvent("pointerdown", event));
-        //     return;
-        // }
-        console.log(123456);
         document.addEventListener("contextmenu", menu.bind(event.target, event.pointerId), {once: true});
         document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
-        console.log(target);
         event.target.setPointerCapture(event.pointerId);
         let isEverMoved = false;
         target._info ={
