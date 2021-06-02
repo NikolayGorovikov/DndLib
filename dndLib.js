@@ -231,7 +231,7 @@ let DND = {
             move(event);
             insideCheck(event);
         }
-        target.addEventListener(`pointermove`, all, true);
+        target.addEventListener(`pointermove`, all);
         function insideCheck(event) {
             if (!event.isPrimary || !(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)).length) return;
             let symbol = Symbol();
