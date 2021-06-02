@@ -1,7 +1,7 @@
 let cons = document.getElementById("console");
-document.addEventListener("gotpointercapture", (e)=>cons.innerHTML = 'got it'+e.target.innerHTML);
-document.addEventListener("lostpointercapture", (e)=>cons.innerHTML = 'lose it'+e.target.innerHTML);
-document.addEventListener("pointercancel", (e)=>cons.innerHTML = 'cancel it'+e.target.innerHTML);
+document.addEventListener("gotpointercapture", (e)=>cons.innerHTML = 'got it'+e.target);
+document.addEventListener("lostpointercapture", (e)=>cons.innerHTML = 'lose it'+e.target);
+document.addEventListener("pointercancel", (e)=>cons.innerHTML = 'cancel it'+e.target);
 let DND = {
     end(element){
         document.removeEventListener(`mousedown`,element._info?.preventCopy);
@@ -100,6 +100,7 @@ let DND = {
         if (!target || target.allMovePrevented || target.onCanceling) return;
         document.addEventListener("contextmenu", menu.bind(target, event.pointerId), {once: true});
         document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
+        console.log(target);
         target.setPointerCapture(event.pointerId);
         let isEverMoved = false;
         target._info ={
