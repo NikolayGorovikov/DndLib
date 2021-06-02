@@ -101,16 +101,16 @@ let DND = {
         let target = event.target.closest(`[data-dnd]`);
         console.log(event.target);
         if (!target || target.allMovePrevented || target.onCanceling) return;
-        if (event.target !== target){
-            event.target = target;
-            target.dispatchEvent(new PointerEvent("pointerdown", event));
-            return;
-        }
+        // if (event.target !== target){
+        //     event.target = target;
+        //     target.dispatchEvent(new PointerEvent("pointerdown", event));
+        //     return;
+        // }
         console.log(123456);
-        document.addEventListener("contextmenu", menu.bind(target, event.pointerId), {once: true});
+        document.addEventListener("contextmenu", menu.bind(event.target, event.pointerId), {once: true});
         document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
         console.log(target);
-        target.setPointerCapture(event.pointerId);
+        event.target.setPointerCapture(event.pointerId);
         let isEverMoved = false;
         target._info ={
             preventCopy(event){
@@ -239,7 +239,7 @@ let DND = {
             move(event);
             insideCheck(event);
         }
-        target.addEventListener(`pointermove`, all);
+        event.target.addEventListener(`pointermove`, all);
         function insideCheck(event) {
             if (!event.isPrimary || !(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)).length) return;
             let symbol = Symbol();
@@ -302,11 +302,11 @@ let DND = {
                 target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
             }
         }
-        target.addEventListener(`pointerup`, function (event) {
+        event.target.addEventListener(`pointerup`, function (event) {
             if (!event.isPrimary) return;
             target.allMovePrevented = true;
             target.onCanceling = true;
-            target.removeEventListener(`pointermove`, all);
+            event.target.removeEventListener(`pointermove`, all);
             document.head.querySelector("[data-systemDnd]").remove();
             doBegin(target.dataset.dndDoanywaybefore, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywaybefore`, target);
             try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywaybefore, target, holder, `Doanywaybefore`, holder);}catch (e){}
