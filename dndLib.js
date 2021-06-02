@@ -1,7 +1,7 @@
 let cons = document.getElementById("console");
-document.addEventListener("gotpointercapture", ()=>cons.innerHTML = 'got it');
-document.addEventListener("lostpointercapture", ()=>cons.innerHTML = 'lose it');
-document.addEventListener("pointercancel", ()=>cons.innerHTML = 'cancel it');
+document.addEventListener("gotpointercapture", (e)=>cons.innerHTML = 'got it'+e.target.innerHTML);
+document.addEventListener("lostpointercapture", (e)=>cons.innerHTML = 'lose it'+e.target.innerHTML);
+document.addEventListener("pointercancel", (e)=>cons.innerHTML = 'cancel it'+e.target.innerHTML);
 let DND = {
     end(element){
         document.removeEventListener(`mousedown`,element._info?.preventCopy);
