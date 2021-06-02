@@ -121,7 +121,9 @@ let DND = {
             target._system.nonCopyStyle = document.head.lastElementChild;
         }
         let move = function (elem, event) {
+            cons.innerHTML = Math.random();
             if (!event.isPrimary) return;
+            cons.innerHTML = Math.random()+"main";
             if (!target.dataset.dndPreventxdirection) elem.style.left = event.pageX - xDifference + xPosOffset + `px`;
             if (!target.dataset.dndPreventydirection) elem.style.top = event.pageY - yDifference + yPosOffset + `px`;
             doBegin(target.dataset.dndOnmove, target, target.hoverItem, `dndOnmove`, target);
@@ -294,6 +296,7 @@ let DND = {
             }
         }
         target.addEventListener(`pointerup`, function (event) {
+            cons.innerHTML = Math.random();
             if (!event.isPrimary) return;
             target.allMovePrevented = true;
             target.onCanceling = true;
