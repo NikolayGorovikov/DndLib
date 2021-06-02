@@ -84,14 +84,20 @@ let DND = {
         catch (e){}
     }
     function menu(id){
-        this.releasePointerCapture(id);
-        this.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}))
+        try{
+            this.releasePointerCapture(id);
+            this.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}))
+        }
+        catch (E){}
     }
     document.body.addEventListener(`pointerdown`, function (event) {
         if (!event.isPrimary) return;
         let target = event.target.closest(`[data-dnd]`);
         if (!target || target.allMovePrevented || target.onCanceling) return;
-        target.addEventListener("dragstart", (e)=>e.preventDefault(), {once: true, capture:true});
+        target.addEventListener("dragstart", (e)=>{
+            e.preventDefault();
+            e.target.style.backgroundColor = "red";
+        }, {once: true, capture:true});
         document.addEventListener("contextmenu", menu.bind(target, event.pointerId), {once: true});
         document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
         target.setPointerCapture(event.pointerId);
