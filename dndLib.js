@@ -1,7 +1,8 @@
-let cons = document.getElementById("console");
-document.addEventListener("gotpointercapture", (e)=>cons.innerHTML = 'got it'+e.target);
-document.addEventListener("lostpointercapture", (e)=>cons.innerHTML = 'lose it'+e.target);
-document.addEventListener("pointercancel", (e)=>cons.innerHTML = 'cancel it'+e.target);
+// let cons = document.getElementById("console");
+// document.addEventListener("gotpointercapture", (e)=>cons.innerHTML = 'got it'+e.target);
+// document.addEventListener("lostpointercapture", (e)=>cons.innerHTML = 'lose it'+e.target);
+// document.addEventListener("pointercancel", (e)=>cons.innerHTML = 'cancel it'+e.target);
+// document.addEventListener("pointermove", ()=>console.log("move"));
 let DND = {
     end(element){
         document.removeEventListener(`mousedown`,element._info?.preventCopy);
@@ -121,9 +122,7 @@ let DND = {
             target._system.nonCopyStyle = document.head.lastElementChild;
         }
         let move = function (elem, event) {
-            cons.innerHTML = Math.random();
             if (!event.isPrimary) return;
-            cons.innerHTML = Math.random()+"main";
             if (!target.dataset.dndPreventxdirection) elem.style.left = event.pageX - xDifference + xPosOffset + `px`;
             if (!target.dataset.dndPreventydirection) elem.style.top = event.pageY - yDifference + yPosOffset + `px`;
             doBegin(target.dataset.dndOnmove, target, target.hoverItem, `dndOnmove`, target);
@@ -232,7 +231,7 @@ let DND = {
             move(event);
             insideCheck(event);
         }
-        target.addEventListener(`pointermove`, all);
+        target.addEventListener(`pointermove`, all, true);
         function insideCheck(event) {
             if (!event.isPrimary || !(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)).length) return;
             let symbol = Symbol();
@@ -296,7 +295,6 @@ let DND = {
             }
         }
         target.addEventListener(`pointerup`, function (event) {
-            cons.innerHTML = Math.random();
             if (!event.isPrimary) return;
             target.allMovePrevented = true;
             target.onCanceling = true;
