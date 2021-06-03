@@ -1,5 +1,5 @@
-window.addEventListener("error", function (){
-    alert("error");
+window.addEventListener("error", function (a){
+    alert(a.message);
 });
 function toDegrees(angle){
     return angle * (180 / Math.PI);
