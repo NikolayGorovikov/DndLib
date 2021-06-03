@@ -30,7 +30,7 @@ function after(elem){
         elem.style.transitionProperty = "";
         elem.stick.style.transitionProperty = "";
         elem.style.zIndex = "100";
-        alert(elem.stick.style.transitionProperty);
+        alert(getComputedStyle(elem.stick).transitionProperty);
     }, 500);
 }
 function begin(elem){
