@@ -1,3 +1,6 @@
+window.addEventListener("error", function (){
+    alert("error");
+});
 function toDegrees(angle){
     return angle * (180 / Math.PI);
 }
@@ -26,7 +29,6 @@ function absolute(elem){
 }
 function after(elem){
     setTimeout(()=>{
-        alert(getComputedStyle(elem.stick).transitionProperty);
         DND.end(elem);
         elem.style.transitionProperty = "";
         elem.stick.style.transitionProperty = "";
