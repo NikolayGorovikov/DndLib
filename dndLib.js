@@ -1,8 +1,3 @@
-// let cons = document.getElementById("console");
-// document.addEventListener("gotpointercapture", (e)=>cons.innerHTML = 'got it'+e.target);
-// document.addEventListener("lostpointercapture", (e)=>cons.innerHTML = 'lose it'+e.target);
-// document.addEventListener("pointercancel", (e)=>cons.innerHTML = 'cancel it'+e.target);
-// document.addEventListener("pointermove", ()=>console.log("move"));
 let DND = {
     end(element){
         document.removeEventListener(`mousedown`,element._info?.preventCopy);
@@ -16,7 +11,6 @@ let DND = {
         element.allMovePrevented = false;
         element._info = undefined;
         element.hoverItem = undefined;
-        element.style.cursor = "";
         element.dispatchEvent(new DragEvent("dragstart"));
         document.dispatchEvent(new MouseEvent("contextmenu"));
     },
@@ -78,7 +72,7 @@ let DND = {
     }
     function atLeastOne(target, func, tracker, i){
         try{
-            for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) {
+            for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) {
                 if ((func(`#${holder?.id}`) !== target.hoverItem) && func(`#${holder?.id}`) !== null) {
                     target.hoverItem = holder;
                     return tracker[i](true);
@@ -162,9 +156,9 @@ let DND = {
             }
             mouseCordsStart = [event.pageX, event.pageY];
             beginStyles(target.dataset.dndStylebegin, target, `dndStylebegin`);
-            try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) beginStyles(holder.dataset.dndStylebegin, holder, `dndStylebegin`);}catch (e){}
-            doBegin(target.dataset.dndDobegin, target, (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>document.getElementById(e)), `dndDobegin`, target);
-            try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndDobegin, target, holder, `dndDobegin`, holder);}catch (e){}
+            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) beginStyles(holder.dataset.dndStylebegin, holder, `dndStylebegin`);}catch (e){}
+            doBegin(target.dataset.dndDobegin, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDobegin`, target);
+            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.dndDobegin, target, holder, `dndDobegin`, holder);}catch (e){}
             target.style.bottom = "";
             target.style.right = "";
             target.style.position = `absolute`;
@@ -174,7 +168,7 @@ let DND = {
             target.style.left = event.pageX - xDifference + xPosOffset + `px`;
             target.style.top = event.pageY - yDifference + yPosOffset + `px`;
             target.style.cursor = "grabbing";
-            doBegin(target.dataset.dndDosetabsolute, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `dndDosetabsolute`, target);
+            doBegin(target.dataset.dndDosetabsolute, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDosetabsolute`, target);
             yDifference = event.pageY;
             xDifference = event.pageX;
             yPosOffset = target.getBoundingClientRect().y - target.offsetParent.getBoundingClientRect().y;
@@ -232,13 +226,13 @@ let DND = {
         }
         event.target.addEventListener(`pointermove`, all);
         function insideCheck(event) {
-            if (!event.isPrimary || !(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)).length) return;
+            if (!event.isPrimary || !(document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget).length)) return;
             let symbol = Symbol();
             let list = [];
             try {
                 let cords = hoverBehavior[String(target.dataset.dndHoverbehavior)](event, target);
-                target[symbol] = target.style.zIndex;
-                target.style.zIndex = `-10000`;
+                target[symbol] = target.style.visibility;
+                target.style.visibility = `hidden`;
                 let hover= target.hoverItem;
                 for (let n of cords) {
                     let elem = document.elementFromPoint(...n);
@@ -248,9 +242,9 @@ let DND = {
                         elem = document.elementFromPoint(...n);
                     }
                     if (!elem) {
-                        target.style.zIndex = target[symbol];
+                        target.style.visibility = target[symbol];
                         list.forEach((e)=>e.style.visibility = "");
-                        if (target.dataset.dndOutthewindow) doBegin(target.dataset.dndOutthewindow, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), "dndOutthewindow", target);
+                        if (target.dataset.dndOutthewindow) doBegin(target.dataset.dndOutthewindow, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), "dndOutthewindow", target);
                         else target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
                         break;
                     }
@@ -274,7 +268,7 @@ let DND = {
                             doBegin(target.dataset?.dndDohoverout, target, hover, 'dndDohoverout', target);
                             doBegin(hover?.dataset?.dndDohoverout, target, hover, 'dndDohoverout', hover);
                         }
-                        target.style.zIndex = target[symbol];
+                        target.style.visibility = target[symbol];
                         list.forEach((e)=>e.style.visibility = "");
                         if (target.hoverItem === hover && i == -1 || i == 1){
                             if (i == -1) target.hoverItem = undefined;
@@ -284,11 +278,11 @@ let DND = {
                         break;
                     }
                 }
-                target.style.zIndex = target[symbol];
+                target.style.visibility = target[symbol];
                 list.forEach((e)=>e.style.visibility = "");
             }
             catch (e) {
-                target.style.zIndex = target[symbol];
+                target.style.visibility = target[symbol];
                 list.forEach((e)=>e.style.visibility = "");
                 target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
             }
@@ -299,11 +293,11 @@ let DND = {
             target.onCanceling = true;
             event.target.removeEventListener(`pointermove`, all);
             document.head.querySelector("[data-systemDnd]").remove();
-            doBegin(target.dataset.dndDoanywaybefore, target, (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywaybefore`, target);
-            try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywaybefore, target, holder, `Doanywaybefore`, holder);}catch (e){}
+            doBegin(target.dataset.dndDoanywaybefore, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDoanywaybefore`, target);
+            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.Doanywaybefore, target, holder, `Doanywaybefore`, holder);}catch (e){}
             let holder = target.hoverItem
             if (abilityToChange) {
-                let notSuccessList = new Set((target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)));
+                let notSuccessList = new Set(document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget));
                 notSuccessList.delete(holder);
                 beginStyles(target.dataset.dndSuccessstyle, target, `dndSuccessstyle`);
                 beginStyles(holder.dataset.dndSuccessstyle, holder, `dndSuccessstyle`);
@@ -314,13 +308,14 @@ let DND = {
             }
             else {
                 beginStyles(target.dataset.dndNotsuccessstyle, target, `dndNotsuccessstyle`);
-                try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndtarget)?.split(" ").map(e=>{return document.getElementById(e);})) beginStyles(holder.dataset.dndNotsuccessstyle, holder, `dndNotsuccessstyle`);}catch (e){}
-                doBegin(target.dataset.dndDonotsuccess, target, (target.dataset.dndHolder || target.parentElement.dataset.dndHolder)?.split(" ").map(e=>{return document.getElementById(e);}), `dndDonotsuccess`, target);
-                try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>{return document.getElementById(e);})) doBegin(holder.dataset.dndDonotsuccess, target, holder, `dndDonotsuccess`, holder);}catch (e){}
+                try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) beginStyles(holder.dataset.dndNotsuccessstyle, holder, `dndNotsuccessstyle`);}catch (e){}
+                doBegin(target.dataset.dndDonotsuccess, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDonotsuccess`, target);
+                try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.dndDonotsuccess, target, holder, `dndDonotsuccess`, holder);}catch (e){}
             }
-            doBegin(target.dataset.dndDoanywayafter, target, (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e)), `dndDoanywayafter`, target);
-            try{for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget)?.split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.Doanywayafter, target, holder, `Doanywayafter`, holder);}catch (e){}
+            doBegin(target.dataset.dndDoanywayafter, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDoanywayafter`, target);
+            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.Doanywayafter, target, holder, `Doanywayafter`, holder);}catch (e){}
             if (!target.dataset.hasOwnProperty("dndEndprevention")) DND.end(target);
+            target.style.cursor = "";
         }, {once: true});
     });
 }

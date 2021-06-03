@@ -33,13 +33,12 @@ function after(elem){
         elem.style.zIndex = "100";
     }, 500);
 }
-function hoverin(target){
-    if (target.ans) return;
-    target.style.boxShadow = "none";
-}
 function begin(elem){
     elem.style.zIndex = "101";
-    try{elem.ans.ans = undefined;}catch (e){}
+    try{
+        elem.ans.ans = undefined;
+        elem.ans.style.boxShadow = "none";
+    }catch (e){}
 }
 function doSuccess(elem, target){
     if (target.ans !== undefined) {
@@ -65,7 +64,7 @@ function doSuccess(elem, target){
 for (let i of document.querySelectorAll(".task > .circle")){
     i.setAttribute("data-dnd-clone", "");
     i.setAttribute("data-dnd-cloneBegin", "visibility: visible");
-    i.setAttribute("data-dnd-target", "ans1 ans2 ans3 ans4");
+    i.setAttribute("data-dnd-target", "#ans1 ,#ans2 ,#ans3 ,#ans4");
     i.stick = i.parentElement.querySelector(".line");
     i.parent = i.parentElement;
     i.setAttribute("data-dnd-doanywaybefore", "before(dragElem)");
@@ -74,8 +73,6 @@ for (let i of document.querySelectorAll(".task > .circle")){
     i.setAttribute("data-dnd-dosuccess", "doSuccess(dragElem, target)");
     i.setAttribute("data-dnd-doanywayafter", "after(dragElem);");
     i.setAttribute("data-dnd-ignore", ".line");
-    i.setAttribute("data-dnd-dohoverin", "hoverin(target)");
-    i.setAttribute("data-dnd-dohoverout", "hoverin(target)");
     i.setAttribute("data-dnd-dobegin", "begin(dragElem)");
     i.setAttribute("data-dnd-dosetabsolute", "absolute(dragElem)");
     i.setAttribute("data-dnd-endprevention", "");
