@@ -74,16 +74,16 @@ let DND = {
     function atLeastOne(target, func, tracker, i){
         try{
             for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) {
-                if ((func('#${holder?.id}') !== target.hoverItem) && func('#${holder?.id}') !== null) {
+                if ((func('#'+holder?.id) !== target.hoverItem) && func('#'+holder?.id) !== null) {
                     target.hoverItem = holder;
                     return tracker[i](true);
                 }
-                if (func('#${holder?.id}') === target.hoverItem) return true;
+                if (func('#'+holder?.id) === target.hoverItem) return true;
             }
         }
         catch (e){}
     }
-    function menu(id){
+    var menu = function(id){
         try{
             this.releasePointerCapture(id);
             this.dispatchEvent(new PointerEvent('pointerup', {isPrimary: true}))

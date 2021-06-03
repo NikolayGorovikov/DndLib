@@ -37,6 +37,7 @@ function begin(elem){
     try{
         elem.ans.ans = undefined;
         elem.ans.style.boxShadow = "none";
+        elem.ans = undefined;
     }catch (e){}
 }
 function doSuccess(elem, target){
@@ -53,12 +54,12 @@ function doSuccess(elem, target){
     setTimeout(()=>{
         clearInterval(a);
         if (eval(elem.parentElement.innerText) == target.innerText) {
-            target.style.boxShadow = "0 0 2vmin green";
+            elem.ans.style.boxShadow = "0 0 2vmin green";
         }
         else{
-            target.style.boxShadow = "0 0 2vmin red";
+            elem.ans.style.boxShadow = "0 0 2vmin red";
         }
-    }, 510);
+    }, 500);
 }
 for (let i of document.querySelectorAll(".task > .circle")){
     i.setAttribute("data-dnd-clone", "");
