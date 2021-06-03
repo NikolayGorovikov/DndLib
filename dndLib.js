@@ -12,8 +12,11 @@ let DND = {
         element.allMovePrevented = false;
         element._info = undefined;
         element.hoverItem = undefined;
-        element.dispatchEvent(new DragEvent("dragstart"));
-        document.dispatchEvent(new MouseEvent("contextmenu"));
+        try{
+            element.dispatchEvent(new DragEvent("dragstart"));
+            document.dispatchEvent(new MouseEvent("contextmenu"));
+        }
+        catch (e){}
     },
     clone:function (event) {
         event.detail.target._system.clone.remove();
