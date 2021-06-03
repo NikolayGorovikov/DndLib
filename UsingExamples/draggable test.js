@@ -26,11 +26,11 @@ function absolute(elem){
 }
 function after(elem){
     setTimeout(()=>{
+        alert(getComputedStyle(elem.stick).transitionProperty);
         DND.end(elem);
         elem.style.transitionProperty = "";
         elem.stick.style.transitionProperty = "";
         elem.style.zIndex = "100";
-        alert(getComputedStyle(elem.stick).transitionProperty);
     }, 500);
 }
 function begin(elem){
