@@ -1,11 +1,12 @@
+"use strict";
 let DND = {
     end(element){
-        document.removeEventListener(`mousedown`,element._info?.preventCopy);
-        document.removeEventListener(`dblclick`,element._info?.preventCopy);
+        document.removeEventListener('mousedown',element._info?.preventCopy);
+        document.removeEventListener('dblclick',element._info?.preventCopy);
         element._system.nonCopyStyle.remove();
         document.removeEventListener("contextmenu", menu);
         if (element.dataset.hasOwnProperty("dndCloneend") || !document.contains(element._system.clone)){
-            element.dispatchEvent(new CustomEvent(`clone`, {detail:{target: element}}));
+            element.dispatchEvent(new CustomEvent('clone', {detail:{target: element}}));
         }
         element.onCanceling = false;
         element.allMovePrevented = false;
@@ -18,7 +19,7 @@ let DND = {
         event.detail.target._system.clone.remove();
         event.detail.target._system.clone = undefined;
     }
-}
+};
 {
     beginStyles.cache = new Map();
     function beginStyles(styles, elem, type) {
@@ -28,8 +29,8 @@ let DND = {
             beginStyles(elem.parentElement.dataset[type], elem, null);
             return;
         }
-        if (styles.includes(`(change)`)) {
-            elem.style.cssText = styles.split(`(change)`).join(``);
+        if (styles.includes('(change)')) {
+            elem.style.cssText = styles.split('(change)').join('');
         }
         else {
             elem.style.cssText = elem.style.cssText + ";"+styles;
@@ -47,11 +48,11 @@ let DND = {
             else return this.center(event, elem);
         },
         __proto__: null
-    }
+    };
     DND.addHoverBehaviour = function(func, name){
         if (hoverBehavior[name] && String(name) !== "undefined") throw new Error("Name you have chosen ("+name+") is already taken. Remember that names 'center', 'mouse' and 'undefined' are reserved. The list of names you cant use: "+Object.getOwnPropertyNames(hoverBehavior).toString().split(",undefined").join(""));
         hoverBehavior[name]=(event, elem)=>[func(event, elem)];
-    }
+    };
     doBegin.cache = new Map();
     function doBegin(text, target, holder, type, owner) {
         if (text === undefined && type !== null) {
@@ -62,22 +63,22 @@ let DND = {
         if (cacheIn) cacheIn(target, holder);
         else {
             try {
-                let F = new Function(`dragElem`, `target`, text);
+                let F = new Function('dragElem', 'target', text);
                 doBegin.cache.set(text, F);
                 F(target, holder);
             } catch (e) {
-                console.log(`Its error in function, here is your func text, your function havent been cached and runned`, text, e);
+                console.log('Its error in function, here is your func text, your function havent been cached and runned', text, e);
             }
         }
     }
     function atLeastOne(target, func, tracker, i){
         try{
             for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) {
-                if ((func(`#${holder?.id}`) !== target.hoverItem) && func(`#${holder?.id}`) !== null) {
+                if ((func('#${holder?.id}') !== target.hoverItem) && func('#${holder?.id}') !== null) {
                     target.hoverItem = holder;
                     return tracker[i](true);
                 }
-                if (func(`#${holder?.id}`) === target.hoverItem) return true;
+                if (func('#${holder?.id}') === target.hoverItem) return true;
             }
         }
         catch (e){}
@@ -85,13 +86,13 @@ let DND = {
     function menu(id){
         try{
             this.releasePointerCapture(id);
-            this.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}))
+            this.dispatchEvent(new PointerEvent('pointerup', {isPrimary: true}))
         }
         catch (E){}
     }
-    document.body.addEventListener(`pointerdown`, function (event) {
+    document.body.addEventListener('pointerdown', function (event) {
         if (!event.isPrimary) return;
-        let target = event.target.closest(`[data-dnd]`);
+        let target = event.target.closest('[data-dnd]');
         if (!target || target.allMovePrevented || target.onCanceling) return;
         document.addEventListener("contextmenu", menu.bind(event.target, event.pointerId), {once: true});
         document.head.insertAdjacentHTML("beforeend", '<style data-systemDnd >*{touch-action:none;}</style>');
@@ -104,8 +105,8 @@ let DND = {
         };
         if (target._system === undefined) target._system = {};
         if (target.dataset.dndCopy === undefined || Boolean(target.dataset.dndCopy)) {
-            document.addEventListener(`mousedown`, target._info.preventCopy);
-            document.addEventListener(`dblclick`, target._info.preventCopy);
+            document.addEventListener('mousedown', target._info.preventCopy);
+            document.addEventListener('dblclick', target._info.preventCopy);
             document.head.insertAdjacentHTML("beforeend", "<style>*{-webkit-touch-callout: none;\n" +
                 "            -webkit-user-select: none;\n" +
                 "            -khtml-user-select: none;\n" +
@@ -116,11 +117,11 @@ let DND = {
         }
         let move = function (elem, event) {
             if (!event.isPrimary) return;
-            if (!target.dataset.dndPreventxdirection) elem.style.left = event.pageX - xDifference + xPosOffset + `px`;
-            if (!target.dataset.dndPreventydirection) elem.style.top = event.pageY - yDifference + yPosOffset + `px`;
-            doBegin(target.dataset.dndOnmove, target, target.hoverItem, `dndOnmove`, target);
+            if (!target.dataset.dndPreventxdirection) elem.style.left = event.pageX - xDifference + xPosOffset + 'px';
+            if (!target.dataset.dndPreventydirection) elem.style.top = event.pageY - yDifference + yPosOffset + 'px';
+            doBegin(target.dataset.dndOnmove, target, target.hoverItem, 'dndOnmove', target);
             try{
-                for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget).split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndOnmove, target, holder, `dndOnmove`, holder);
+                for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget).split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndOnmove, target, holder, 'dndOnmove', holder);
             }
             catch (e){}
         }.bind(null, target);
@@ -134,7 +135,7 @@ let DND = {
         xDifference = event.pageX;
         yPosOffset = target.getBoundingClientRect().y - target.offsetParent.getBoundingClientRect().y;
         xPosOffset = target.getBoundingClientRect().x - target.offsetParent.getBoundingClientRect().x;
-        if (getComputedStyle(target.offsetParent).position === `static`) {
+        if (getComputedStyle(target.offsetParent).position === 'static') {
             yPosOffset = target.getBoundingClientRect().y - document.documentElement.getBoundingClientRect().y - (parseFloat(getComputedStyle(document.documentElement).borderTopWidth) + parseFloat(getComputedStyle(document.documentElement).paddingTop));
             xPosOffset = target.getBoundingClientRect().x - document.documentElement.getBoundingClientRect().x - (parseFloat(getComputedStyle(document.documentElement).borderLeftWidth) + parseFloat(getComputedStyle(document.documentElement).paddingLeft));
         }
@@ -145,35 +146,35 @@ let DND = {
         (function setPosition() {
             if (target.allMovePrevented || !event.isPrimary) return;
             isEverMoved = true;
-            if (target.dataset.hasOwnProperty(`dndClone`) && !target._system.clone) {
+            if (target.dataset.hasOwnProperty('dndClone') && !target._system.clone) {
                 target._system.clone = target.cloneNode(true);
-                target._system.clone.style.visibility = `hidden`;
-                Object.defineProperty(target, `clone`, {writable: false});
-                target._system.clone.removeAttribute(`data-dnd`);
+                target._system.clone.style.visibility = 'hidden';
+                Object.defineProperty(target, 'clone', {writable: false});
+                target._system.clone.removeAttribute('data-dnd');
                 target.before(target._system.clone);
                 beginStyles(target.dataset.dndClonebegin, target._system.clone, 'dndClonebegin');
-                target.addEventListener(`clone`, DND.clone, {once: true});
+                target.addEventListener('clone', DND.clone, {once: true});
             }
             mouseCordsStart = [event.pageX, event.pageY];
-            beginStyles(target.dataset.dndStylebegin, target, `dndStylebegin`);
-            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) beginStyles(holder.dataset.dndStylebegin, holder, `dndStylebegin`);}catch (e){}
-            doBegin(target.dataset.dndDobegin, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDobegin`, target);
-            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.dndDobegin, target, holder, `dndDobegin`, holder);}catch (e){}
+            beginStyles(target.dataset.dndStylebegin, target, 'dndStylebegin');
+            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) beginStyles(holder.dataset.dndStylebegin, holder, 'dndStylebegin');}catch (e){}
+            doBegin(target.dataset.dndDobegin, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), 'dndDobegin', target);
+            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.dndDobegin, target, holder, 'dndDobegin', holder);}catch (e){}
             target.style.bottom = "";
             target.style.right = "";
-            target.style.position = `absolute`;
-            target.style.boxSizing = `border-box`;
-            target.style.width = String(width) + `px`;
-            target.style.height = String(height) + `px`;
-            target.style.left = event.pageX - xDifference + xPosOffset + `px`;
-            target.style.top = event.pageY - yDifference + yPosOffset + `px`;
+            target.style.position = 'absolute';
+            target.style.boxSizing = 'border-box';
+            target.style.width = String(width) + 'px';
+            target.style.height = String(height) + 'px';
+            target.style.left = event.pageX - xDifference + xPosOffset + 'px';
+            target.style.top = event.pageY - yDifference + yPosOffset + 'px';
             target.style.cursor = "grabbing";
-            doBegin(target.dataset.dndDosetabsolute, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDosetabsolute`, target);
+            doBegin(target.dataset.dndDosetabsolute, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), 'dndDosetabsolute', target);
             yDifference = event.pageY;
             xDifference = event.pageX;
             yPosOffset = target.getBoundingClientRect().y - target.offsetParent.getBoundingClientRect().y;
             xPosOffset = target.getBoundingClientRect().x - target.offsetParent.getBoundingClientRect().x;
-            if (getComputedStyle(target.offsetParent).position === `static`) {
+            if (getComputedStyle(target.offsetParent).position === 'static') {
                 yPosOffset = target.getBoundingClientRect().y - document.documentElement.getBoundingClientRect().y - (parseFloat(getComputedStyle(document.documentElement).borderTopWidth) + parseFloat(getComputedStyle(document.documentElement).paddingTop));
                 xPosOffset = target.getBoundingClientRect().x - document.documentElement.getBoundingClientRect().x - (parseFloat(getComputedStyle(document.documentElement).borderLeftWidth) + parseFloat(getComputedStyle(document.documentElement).paddingLeft));
             }
@@ -224,7 +225,7 @@ let DND = {
             move(event);
             insideCheck(event);
         }
-        event.target.addEventListener(`pointermove`, all);
+        event.target.addEventListener('pointermove', all);
         function insideCheck(event) {
             if (!event.isPrimary || !(document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget).length)) return;
             let symbol = Symbol();
@@ -232,7 +233,7 @@ let DND = {
             try {
                 let cords = hoverBehavior[String(target.dataset.dndHoverbehavior)](event, target);
                 target[symbol] = target.style.visibility;
-                target.style.visibility = `hidden`;
+                target.style.visibility = 'hidden';
                 let hover= target.hoverItem;
                 for (let n of cords) {
                     let elem = document.elementFromPoint(...n);
@@ -245,7 +246,7 @@ let DND = {
                         target.style.visibility = target[symbol];
                         list.forEach((e)=>e.style.visibility = "");
                         if (target.dataset.dndOutthewindow) doBegin(target.dataset.dndOutthewindow, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), "dndOutthewindow", target);
-                        else target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
+                        else target.dispatchEvent(new PointerEvent('pointerup', {isPrimary: true}));
                         break;
                     }
                     else if (tracker[i](atLeastOne(target, elem.closest.bind(elem), tracker, i))) {
@@ -284,36 +285,36 @@ let DND = {
             catch (e) {
                 target.style.visibility = target[symbol];
                 list.forEach((e)=>e.style.visibility = "");
-                target.dispatchEvent(new PointerEvent(`pointerup`, {isPrimary: true}));
+                target.dispatchEvent(new PointerEvent('pointerup', {isPrimary: true}));
             }
         }
-        event.target.addEventListener(`pointerup`, function (event) {
+        event.target.addEventListener('pointerup', function (event) {
             if (!event.isPrimary) return;
             target.allMovePrevented = true;
             target.onCanceling = true;
-            event.target.removeEventListener(`pointermove`, all);
+            event.target.removeEventListener('pointermove', all);
             document.head.querySelector("[data-systemDnd]").remove();
-            doBegin(target.dataset.dndDoanywaybefore, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDoanywaybefore`, target);
-            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.Doanywaybefore, target, holder, `Doanywaybefore`, holder);}catch (e){}
+            doBegin(target.dataset.dndDoanywaybefore, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), 'dndDoanywaybefore', target);
+            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.Doanywaybefore, target, holder, 'Doanywaybefore', holder);}catch (e){}
             let holder = target.hoverItem
             if (abilityToChange) {
                 let notSuccessList = new Set(document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget));
                 notSuccessList.delete(holder);
-                beginStyles(target.dataset.dndSuccessstyle, target, `dndSuccessstyle`);
-                beginStyles(holder.dataset.dndSuccessstyle, holder, `dndSuccessstyle`);
-                try{for (let holderi of notSuccessList) {beginStyles(holderi.dataset.dndNotsuccessstyle, holderi, `dndNotsuccessstyle`);}}catch (e){}
-                doBegin(target.dataset.dndDosuccess, target, holder, `dndDosuccess`, target);
-                doBegin(holder.dataset.dndDosuccess, target, holder, `dndDosuccess`, holder);
-                try{for (let holderi of notSuccessList) doBegin(holderi.dataset.dndDonotsuccess, target, holderi, `dndDonotsuccess`, holderi);}catch (e){}
+                beginStyles(target.dataset.dndSuccessstyle, target, 'dndSuccessstyle');
+                beginStyles(holder.dataset.dndSuccessstyle, holder, 'dndSuccessstyle');
+                try{for (let holderi of notSuccessList) {beginStyles(holderi.dataset.dndNotsuccessstyle, holderi, 'dndNotsuccessstyle');}}catch (e){}
+                doBegin(target.dataset.dndDosuccess, target, holder, 'dndDosuccess', target);
+                doBegin(holder.dataset.dndDosuccess, target, holder, 'dndDosuccess', holder);
+                try{for (let holderi of notSuccessList) doBegin(holderi.dataset.dndDonotsuccess, target, holderi, 'dndDonotsuccess', holderi);}catch (e){}
             }
             else {
-                beginStyles(target.dataset.dndNotsuccessstyle, target, `dndNotsuccessstyle`);
-                try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) beginStyles(holder.dataset.dndNotsuccessstyle, holder, `dndNotsuccessstyle`);}catch (e){}
-                doBegin(target.dataset.dndDonotsuccess, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDonotsuccess`, target);
-                try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.dndDonotsuccess, target, holder, `dndDonotsuccess`, holder);}catch (e){}
+                beginStyles(target.dataset.dndNotsuccessstyle, target, 'dndNotsuccessstyle');
+                try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) beginStyles(holder.dataset.dndNotsuccessstyle, holder, 'dndNotsuccessstyle');}catch (e){}
+                doBegin(target.dataset.dndDonotsuccess, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), 'dndDonotsuccess', target);
+                try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.dndDonotsuccess, target, holder, 'dndDonotsuccess', holder);}catch (e){}
             }
-            doBegin(target.dataset.dndDoanywayafter, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), `dndDoanywayafter`, target);
-            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.Doanywayafter, target, holder, `Doanywayafter`, holder);}catch (e){}
+            doBegin(target.dataset.dndDoanywayafter, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), 'dndDoanywayafter', target);
+            try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.Doanywayafter, target, holder, 'Doanywayafter', holder);}catch (e){}
             if (!target.dataset.hasOwnProperty("dndEndprevention")) DND.end(target);
             target.style.cursor = "";
         }, {once: true});

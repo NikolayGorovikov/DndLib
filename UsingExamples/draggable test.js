@@ -11,7 +11,6 @@ function stickPosition(ball){
         degrees = 360-degrees;
     }
     ball.stick.style.transform = `rotate(${degrees}deg)`;
-    console.log(degrees);
 }
 function notSuccess(elem){
     elem.style.left = "calc(100% - 3.5vmin)";
