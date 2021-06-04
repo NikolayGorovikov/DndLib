@@ -1,4 +1,5 @@
 let gradient;
+for (let i of document.querySelectorAll(".dragger")) i.insertAdjacentHTML("afterbegin", '<div class="drin"></div>');
 function randomInteger(a,b){
     return a+Number(((b-a)*Math.random()).toFixed(0));
 }
