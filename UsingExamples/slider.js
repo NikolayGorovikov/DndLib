@@ -80,7 +80,6 @@ function drop(elem){
     elem.drop = setInterval(function (){
         if (parseFloat(elem.style.width) < Math.min(actualWidth, actualHeight)*3.5/100) {
             clearInterval(elem.drop);
-            alert(actualWidth);
             return;
         }
         elem.style.left = parseFloat(elem.style.left) + finalWidth/30 + "px";
