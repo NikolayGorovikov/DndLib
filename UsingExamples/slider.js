@@ -76,7 +76,6 @@ function move(elem){
 function drop(elem){
     clearInterval(elem.interval);
     let finalWidth = Math.min(actualWidth, actualHeight)*3.5*0.7/100;
-    alert(elem.style.width+Math.min(actualWidth, actualHeight)*3.5/100);
     elem.drop = setInterval(function (){
         if (parseFloat(elem.style.width) < Math.min(actualWidth, actualHeight)*3.5/100) {
             clearInterval(elem.drop);
