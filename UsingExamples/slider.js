@@ -88,8 +88,8 @@ function drop(elem){
     }, 6);
 }
 function resize(){
-    actualHeight = innerHeight;
-    actualWidth = innerWidth;
+    actualHeight = document.documentElement.getBoundingClientRect().height;
+    actualWidth = document.documentElement.getBoundingClientRect().width;
     document.querySelectorAll(".slider>.dragger, .sliderLightness>.dragger, .sliderSaturation>.dragger").forEach((e)=>{
         e.style.width= "3.5vmin";
         e.style.height= "14vmin";
