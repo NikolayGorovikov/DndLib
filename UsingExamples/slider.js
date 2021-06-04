@@ -2,6 +2,9 @@ let gradient;
 function randomInteger(a,b){
     return a+Number(((b-a)*Math.random()).toFixed(0));
 }
+innerWidth
+let actualWidth = innerWidth;
+let actualHeight = innerHeight;
 function getAmount(e, max, main, spec){
     let actualLeft = parseFloat(e.style.left) - ((max - e.getBoundingClientRect().width) > 0?max - e.getBoundingClientRect().width:0)/2;
     if (actualLeft < 0) actualLeft = 0;
@@ -14,9 +17,9 @@ function getAmount(e, max, main, spec){
 }
 document.querySelectorAll(".dragger").forEach((e)=>e.style.left = randomInteger(0, Math.floor(e.parentElement.getBoundingClientRect().width - e.getBoundingClientRect().width))+"px");
 function refactor(a,b,c){
-    let deg = getAmount(document.querySelector(".slider > .dragger"), Math.min(innerHeight, innerWidth)*5.95/100, a, a&&b&&c)*360;
-    let satur = getAmount(document.querySelector(".sliderSaturation .dragger"), Math.min(innerHeight, innerWidth)*5.95/100, b,a&&b&&c)*100;
-    let light = getAmount(document.querySelector(".sliderLightness .dragger"), Math.min(innerHeight, innerWidth)*5.95/100, c,a&&b&&c)*100;
+    let deg = getAmount(document.querySelector(".slider > .dragger"), Math.min(actualHeight, actualWidth)*5.95/100, a, a&&b&&c)*360;
+    let satur = getAmount(document.querySelector(".sliderSaturation .dragger"), Math.min(actualHeight, actualWidth)*5.95/100, b,a&&b&&c)*100;
+    let light = getAmount(document.querySelector(".sliderLightness .dragger"), Math.min(actualHeight, actualWidth)*5.95/100, c,a&&b&&c)*100;
     if (a){
         gradient="linear-gradient(90deg";
         for (let i = 0;i<360; i++){
@@ -51,9 +54,9 @@ function refactor(a,b,c){
 refactor(true, true, true);
 function begin(elem){
     clearInterval(elem.drop);
-    let finalWidth = Math.min(innerWidth, innerHeight)*3.5*0.7/100;
+    let finalWidth = Math.min(actualWidth, actualHeight)*3.5*0.7/100;
     elem.interval = setInterval(function (){
-        if (parseFloat(elem.style.width) > Math.min(innerWidth, innerHeight)*5.95/100) {
+        if (parseFloat(elem.style.width) > Math.min(actualWidth, actualHeight)*5.95/100) {
             clearInterval(elem.interval);
             return;
         }
@@ -72,10 +75,10 @@ function move(elem){
 }
 function drop(elem){
     clearInterval(elem.interval);
-    let finalWidth = Math.min(innerWidth, innerHeight)*3.5*0.7/100;
-    alert(elem.style.width+Math.min(innerWidth, innerHeight)*3.5/100);
+    let finalWidth = Math.min(actualWidth, actualHeight)*3.5*0.7/100;
+    alert(elem.style.width+Math.min(actualWidth, actualHeight)*3.5/100);
     elem.drop = setInterval(function (){
-        if (parseFloat(elem.style.width) < Math.min(innerWidth, innerHeight)*3.5/100) {
+        if (parseFloat(elem.style.width) < Math.min(actualWidth, actualHeight)*3.5/100) {
             clearInterval(elem.drop);
             return;
         }
@@ -84,11 +87,12 @@ function drop(elem){
     }, 6);
 }
 function resize(){
+    actualHeight = innerHeight;
+    actualWidth = innerWidth;
     document.querySelectorAll(".slider>.dragger, .sliderLightness>.dragger, .sliderSaturation>.dragger").forEach((e)=>{
         e.style.width= "3.5vmin";
         e.style.height= "14vmin";
-        e.style.left = (e.parentElement.getBoundingClientRect().width - e.getBoundingClientRect().width)*e.left+(Math.min(innerWidth, innerHeight)*5.95/100-Math.min(innerWidth, innerHeight)*3.5/100)/2+"px";
-        console.log(e.parentElement.getBoundingClientRect().width, Math.min(innerHeight, innerWidth)*5.95/100, e.left);
+        e.style.left = (e.parentElement.getBoundingClientRect().width - e.getBoundingClientRect().width)*e.left+(Math.min(actualWidth, actualHeight)*5.95/100-Math.min(actualWidth, actualHeight)*3.5/100)/2+"px";
     });
 }
 window.onresize = resize;
