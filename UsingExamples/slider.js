@@ -76,6 +76,7 @@ function drop(elem){
     elem.drop = setInterval(function (){
         if (elem.getBoundingClientRect().width < Math.min(innerWidth, innerHeight)*3.5/100) {
             clearInterval(elem.drop);
+            elem.style.width = Math.min(innerWidth, innerHeight)*3.5/100+"px";
             return;
         }
         elem.style.left = parseFloat(elem.style.left) + finalWidth/40 + "px";
