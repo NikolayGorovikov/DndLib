@@ -53,14 +53,14 @@ function begin(elem){
     clearInterval(elem.drop);
     let finalWidth = Math.min(innerWidth, innerHeight)*3.5*0.7/100;
     elem.interval = setInterval(function (){
-        if (elem.getBoundingClientRect().width > Math.min(innerWidth, innerHeight)*5.95/100) {
+        if (elem.parseFloat(elem.style.width) > Math.min(innerWidth, innerHeight)*5.95/100) {
             clearInterval(elem.interval);
             return;
         }
         elem.style.width = parseFloat(elem.style.width) + finalWidth/20 + "px";
-        if (parseFloat(elem.style.left) - finalWidth/40 > 0 && parseFloat(elem.style.left) - finalWidth/40 + elem.getBoundingClientRect().width < elem.parentElement.getBoundingClientRect().width) elem.style.left = parseFloat(elem.style.left) - finalWidth/40 + "px";
+        if (parseFloat(elem.style.left) - finalWidth/40 > 0 && parseFloat(elem.style.left) - finalWidth/40 + elem.parseFloat(elem.style.width) < elem.parseFloat(elem.parentElement.style.width)) elem.style.left = parseFloat(elem.style.left) - finalWidth/40 + "px";
         else if (parseFloat(elem.style.left) - finalWidth/40 < 0) elem.style.left = "0";
-        else elem.style.left = elem.parentElement.getBoundingClientRect().width - parseFloat(elem.style.width) + "px";
+        else elem.style.left = elem.parseFloat(elem.parentElement.style.width) - parseFloat(elem.style.width) + "px";
     }, 6);
 }
 function move(elem){
@@ -74,13 +74,12 @@ function drop(elem){
     clearInterval(elem.interval);
     let finalWidth = Math.min(innerWidth, innerHeight)*3.5*0.7/100;
     elem.drop = setInterval(function (){
-        if (elem.getBoundingClientRect().width < Math.min(innerWidth, innerHeight)*3.5/100) {
+        if (elem.parseFloat(elem.style.width) < Math.min(innerWidth, innerHeight)*3.5/100) {
             clearInterval(elem.drop);
-            elem.style.width = Math.min(innerWidth, innerHeight)*3.5/100+"px";
             return;
         }
         elem.style.left = parseFloat(elem.style.left) + finalWidth/40 + "px";
-        elem.style.width = elem.getBoundingClientRect().width - finalWidth/20 + "px";
+        elem.style.width = elem.parseFloat(elem.style.width) - finalWidth/20 + "px";
     }, 6);
 }
 function resize(){
