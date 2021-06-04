@@ -169,8 +169,8 @@ let DND = {
             target.style.boxSizing = 'border-box';
             target.style.width = String(width) + 'px';
             target.style.height = String(height) + 'px';
-            target.style.left = event.pageX - xDifference + xPosOffset + 'px';
-            target.style.top = event.pageY - yDifference + yPosOffset + 'px';
+            if (!target.dataset.hasOwnProperty("dndPreventxdirection")) target.style.left = event.pageX - xDifference + xPosOffset + 'px';
+            if (!target.dataset.hasOwnProperty("dndPreventydirection")) target.style.top = event.pageY - yDifference + yPosOffset + 'px';
             target.style.cursor = "grabbing";
             doBegin(target.dataset.dndDosetabsolute, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), 'dndDosetabsolute', target);
             colorsHolder = {

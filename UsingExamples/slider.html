@@ -8,6 +8,10 @@
     <link href="../descriptionStyles.css" rel="stylesheet">
     <script src="../dndLib.js" defer></script>
     <style>
+        body{
+            max-width: 2000px;
+            margin: 0 auto;
+        }
         .slider, .sliderLightness, .sliderSaturation{
             width: 90%;
             height: 10vmin;
@@ -15,6 +19,7 @@
             margin: 0 auto;
             position: relative;
             background-color: black;
+            touch-action: none;
         }
         .sliderSaturation, .sliderLightness{
             width: 100%;
@@ -35,7 +40,7 @@
             text-align: center;
         }
         .wrapper{
-            width: 90vw;
+            width: 90%;
             display: flex;
             margin: 3vmin auto;
             justify-content: space-between;
@@ -46,10 +51,24 @@
             height: 17vmin;
         }
         #color{
-            width: 90vw;
-            height: 40vmin;
-            margin: 5vmin auto;
+            width: 100%;
+            height: 20vmin;
             border-radius: 1.75vmin;
+        }
+        .colors{
+            display: flex;
+            flex-direction: column;
+            height: 20vmin;
+            justify-content: space-between;
+            margin: auto;
+        }
+        .onecolor{
+            flex-basis: 33%;
+            flex-grow: 0;
+            font-size: 3.5vmin;
+            margin:0;
+            width: 100%;
+            text-align: center;
         }
     </style>
 </head>
@@ -76,7 +95,19 @@
             </div>
         </div>
     </div>
-    <div id="color"></div>
+    <h2 class="header" style="margin: 5vmin 0 0;">Result</h2>
+    <div class="wrapper" style="margin: 1vmin auto;">
+        <div id="color"></div>
+        <div class="colors">
+            <p id="colorInHSL" class="description onecolor"></p>
+            <p  class="description onecolor" id="colorInRGB"></p>
+            <p  class="description onecolor" id="colorIn16"></p>
+        </div>
+    </div>
+    <p class="description">
+        You can see that here the most difficult process is to make a color picking, but even it is a bit difficult using this library it took me 90 lines of code, hope you see how easier it makes a process of
+        grad-n-drop. Go <a href="#">here</a> to view fourth example
+    </p>
     <script src="slider.js" defer></script>
 </body>
 </html>
