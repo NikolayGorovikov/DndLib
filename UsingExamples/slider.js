@@ -56,10 +56,11 @@ function begin(elem){
     elem.interval = setInterval(function (){
         if (elem.getBoundingClientRect().width > Math.min(innerWidth, innerHeight)*5.95/100) {
             clearInterval(elem.interval);
-            alert(i);
             return;
         }
         i++;
+        document.body.style.backgroundColor = "#"+randomInteger(0,100000).toString(16).padStart(6, "0");
+        console.log("#"+randomInteger(0,1000000).toString(16).padStart(6, "0"));
         elem.style.width = parseFloat(elem.style.width) + finalWidth/20 + "px";
         if (parseFloat(elem.style.left) - finalWidth/40 > 0 && parseFloat(elem.style.left) - finalWidth/40 + elem.getBoundingClientRect().width < elem.parentElement.getBoundingClientRect().width) elem.style.left = parseFloat(elem.style.left) - finalWidth/40 + "px";
         else if (parseFloat(elem.style.left) - finalWidth/40 < 0) elem.style.left = "0";
