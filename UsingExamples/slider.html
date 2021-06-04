@@ -7,12 +7,49 @@
     <link href="../returnStyles.css" rel="stylesheet">
     <link href="../descriptionStyles.css" rel="stylesheet">
     <script src="../dndLib.js" defer></script>
-    <script src="slider.js" defer></script>
     <style>
-        .slider{
-            width: 80vw;
+        .slider, .sliderLightness, .sliderSaturation{
+            width: 90%;
             height: 10vmin;
-            background-image: linear-gradient(90deg, hsl(120, 70%, 70%), hsl(240, 70%, 70%),hsl(360, 70%, 70%));
+            border-radius: 1.5vmin;
+            margin: 0 auto;
+            position: relative;
+            background-color: black;
+        }
+        .sliderSaturation, .sliderLightness{
+            width: 100%;
+        }
+        .dragger{
+            position: absolute;
+            width: 3.5vmin;
+            height: 14vmin;
+            top: -2vmin;
+            box-sizing: border-box;
+            border: 1.25vmin black solid;
+            border-radius: 1.75vmin;
+        }
+        .header{
+            font-size: 5vmin;
+            margin: 1vmin auto;
+            font-family: geometria;
+            text-align: center;
+        }
+        .wrapper{
+            width: 90vw;
+            display: flex;
+            margin: 3vmin auto;
+            justify-content: space-between;
+        }
+        .wrapper > div{
+            flex-basis: 47%;
+            flex-grow: 0;
+            height: 17vmin;
+        }
+        #color{
+            width: 90vw;
+            height: 40vmin;
+            margin: 5vmin auto;
+            border-radius: 1.75vmin;
         }
     </style>
 </head>
@@ -21,6 +58,25 @@
     <p class="description">
       Using this library is very easy to make a slider, so lets make our goal a bit more difficult, and lets make a color choser.
     </p>
-    <div class="slider"></div>
+    <h2 class="header">Hue</h2>
+    <div class="slider">
+        <div class="dragger" data-dnd data-dnd-Preventydirection data-dnd-doBegin="begin(dragElem)" data-dnd-onmove="move(dragElem)" data-dnd-Doanywaybefore="drop(dragElem)"></div>
+    </div>
+    <div class="wrapper">
+        <div class="Saturation">
+            <h2 class="header">Saturation</h2>
+            <div class="sliderSaturation">
+                <div class="dragger" data-dnd data-dnd-Preventydirection data-dnd-doBegin="begin(dragElem)" data-dnd-onmove="move(dragElem)" data-dnd-Doanywaybefore="drop(dragElem)"></div>
+            </div>
+        </div>
+        <div class="Lightness">
+            <h2 class="header">Lightness</h2>
+            <div class="sliderLightness">
+                <div class="dragger" data-dnd data-dnd-Preventydirection data-dnd-doBegin="begin(dragElem)" data-dnd-onmove="move(dragElem)" data-dnd-Doanywaybefore="drop(dragElem)"></div>
+            </div>
+        </div>
+    </div>
+    <div id="color"></div>
+    <script src="slider.js" defer></script>
 </body>
 </html>

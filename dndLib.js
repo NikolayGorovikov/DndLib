@@ -91,7 +91,7 @@ let DND = {
             this.releasePointerCapture(id);
             this.dispatchEvent(new PointerEvent('pointerup', {isPrimary: true}))
         }
-        catch (E){}
+        catch (e){}
     }
     document.body.addEventListener('pointerdown', function (event) {
         if (!event.isPrimary) return;
@@ -120,8 +120,8 @@ let DND = {
         }
         let move = function (elem, event) {
             if (!event.isPrimary) return;
-            if (!target.dataset.dndPreventxdirection) elem.style.left = event.pageX - xDifference + xPosOffset + 'px';
-            if (!target.dataset.dndPreventydirection) elem.style.top = event.pageY - yDifference + yPosOffset + 'px';
+            if (!target.dataset.hasOwnProperty("dndPreventxdirection")) elem.style.left = event.pageX - xDifference + xPosOffset + 'px';
+            if (!target.dataset.hasOwnProperty("dndPreventydirection")) elem.style.top = event.pageY - yDifference + yPosOffset + 'px';
             doBegin(target.dataset.dndOnmove, target, target.hoverItem, 'dndOnmove', target);
             try{
                 for (let holder of (target.dataset.dndTarget || target.parentElement.dataset.dndTarget).split(" ").map(e=>document.getElementById(e))) doBegin(holder.dataset.dndOnmove, target, holder, 'dndOnmove', holder);
@@ -173,18 +173,6 @@ let DND = {
             target.style.top = event.pageY - yDifference + yPosOffset + 'px';
             target.style.cursor = "grabbing";
             doBegin(target.dataset.dndDosetabsolute, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), 'dndDosetabsolute', target);
-            yDifference = event.pageY;
-            xDifference = event.pageX;
-            yPosOffset = target.getBoundingClientRect().y - target.offsetParent.getBoundingClientRect().y;
-            xPosOffset = target.getBoundingClientRect().x - target.offsetParent.getBoundingClientRect().x;
-            if (getComputedStyle(target.offsetParent).position === 'static') {
-                yPosOffset = target.getBoundingClientRect().y - document.documentElement.getBoundingClientRect().y - (parseFloat(getComputedStyle(document.documentElement).borderTopWidth) + parseFloat(getComputedStyle(document.documentElement).paddingTop));
-                xPosOffset = target.getBoundingClientRect().x - document.documentElement.getBoundingClientRect().x - (parseFloat(getComputedStyle(document.documentElement).borderLeftWidth) + parseFloat(getComputedStyle(document.documentElement).paddingLeft));
-            }
-            else {
-                yPosOffset -= (parseFloat(getComputedStyle(target.offsetParent).borderTopWidth) + parseFloat(getComputedStyle(target.offsetParent).paddingTop));
-                xPosOffset -= (parseFloat(getComputedStyle(target.offsetParent).borderLeftWidth) + parseFloat(getComputedStyle(target.offsetParent).paddingLeft));
-            }
             colorsHolder = {
                 get "1"() {
                     return "dndHoverinstyle";
@@ -228,6 +216,20 @@ let DND = {
             move(event);
             insideCheck(event);
         }
+        function once(){
+            yDifference = event.pageY;
+        xDifference = event.pageX;
+        yPosOffset = target.getBoundingClientRect().y - target.offsetParent.getBoundingClientRect().y;
+        xPosOffset = target.getBoundingClientRect().x - target.offsetParent.getBoundingClientRect().x;
+        if (getComputedStyle(target.offsetParent).position === 'static') {
+            yPosOffset = target.getBoundingClientRect().y - document.documentElement.getBoundingClientRect().y - (parseFloat(getComputedStyle(document.documentElement).borderTopWidth) + parseFloat(getComputedStyle(document.documentElement).paddingTop));
+            xPosOffset = target.getBoundingClientRect().x - document.documentElement.getBoundingClientRect().x - (parseFloat(getComputedStyle(document.documentElement).borderLeftWidth) + parseFloat(getComputedStyle(document.documentElement).paddingLeft));
+        }
+        else {
+            yPosOffset -= (parseFloat(getComputedStyle(target.offsetParent).borderTopWidth) + parseFloat(getComputedStyle(target.offsetParent).paddingTop));
+            xPosOffset -= (parseFloat(getComputedStyle(target.offsetParent).borderLeftWidth) + parseFloat(getComputedStyle(target.offsetParent).paddingLeft));
+        }}
+        event.target.addEventListener("pointermove", once, {once: true});
         event.target.addEventListener('pointermove', all);
         function insideCheck(event) {
             if (!event.isPrimary || !(document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget).length)) return;
@@ -296,6 +298,7 @@ let DND = {
             target.allMovePrevented = true;
             target.onCanceling = true;
             event.target.removeEventListener('pointermove', all);
+            event.target.removeEventListener("pointermove", once, {once: true});
             document.head.querySelector("[data-systemDnd]").remove();
             doBegin(target.dataset.dndDoanywaybefore, target, document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget), 'dndDoanywaybefore', target);
             try{for (let holder of document.querySelectorAll(target.dataset.dndTarget || target.parentElement.dataset.dndTarget)) doBegin(holder.dataset.Doanywaybefore, target, holder, 'Doanywaybefore', holder);}catch (e){}
