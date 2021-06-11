@@ -110,7 +110,10 @@
         of code. Go <a href="slider.html">here</a> to see a next example.
     </p>
     <script>
-         navigator.clipboard.writeText("made with ❤️");
+        try{
+            navigator.clipboard.writeText("made with ❤️");
+        }
+        catch (e){alert(e)}
     </script>
 </body>
 </html>
